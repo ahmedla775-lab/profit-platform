@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>منصة الأرباح</title>
+
+  <!-- Cairo Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        fontFamily: {
+          sans: ['Cairo', 'sans-serif']
+        },
+        extend: {
+          colors: {
+            primary: '#10B981',
+            secondary: '#F59E0B',
+            background: '#0F172A'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-background text-white font-sans">
+
+  <!-- Header -->
+  <header class="flex justify-between items-center p-6 border-b border-white/10">
+    <h1 class="text-2xl font-bold text-primary">منصة الأرباح</h1>
+    <button class="bg-primary px-6 py-2 rounded-full font-bold">
+      تسجيل الدخول
+    </button>
+  </header>
+
+  <!-- Hero -->
+  <section class="p-10 text-center">
+    <h2 class="text-4xl font-extrabold mb-4">
+      اربح من الإنترنت بطريقة ذكية
+    </h2>
+    <p class="text-slate-400 mb-6">
+      منصة عربية حديثة للربح، المهام، والسحب الآمن
+    </p>
+
+    <button class="bg-secondary text-black px-8 py-3 rounded-full font-bold">
+      ابدأ الآن
+    </button>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center text-slate-500 py-6 border-t border-white/10">
+    © 2026 جميع الحقوق محفوظة
+  </footer>
+
+</body>
+</html>
