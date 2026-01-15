@@ -1,137 +1,264 @@
-      
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<title>Profit Platform</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>منصة الأرباح</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- FONT -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+<!-- ICONS -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+<!-- CHART -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
-body{margin:0;font-family:Cairo;background:#0f172a;color:#fff}
-header{padding:20px;text-align:center;font-size:24px;font-weight:700;background:#020617}
-.card{background:rgba(255,255,255,.08);backdrop-filter:blur(14px);border-radius:16px;padding:16px;margin:12px;box-shadow:0 0 20px rgba(0,255,200,.2)}
-button,input,select{width:100%;padding:12px;border-radius:12px;border:none;margin-top:8px;font-size:15px}
-button{background:linear-gradient(90deg,#22c55e,#06b6d4);color:#000;font-weight:700}
-.icon{font-size:22px;padding:10px;border-radius:50%;background:#020617;display:inline-block;margin:6px}
-.hidden{display:none}
+body{margin:0;font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#020617,#020617,#022c22);color:#fff;}
+.glass{background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:15px;margin:15px;box-shadow:0 0 25px rgba(16,185,129,.35);}
+.btn{background:#10b981;border:none;padding:12px;width:100%;border-radius:999px;color:#fff;font-weight:bold;cursor:pointer;margin-top:10px;}
+.btn-outline{background:transparent;border:1px solid #10b981;}
+.icon{font-size:28px;}
+.hidden{display:none;}
+input,select{width:100%;padding:10px;border-radius:12px;border:none;margin-top:8px;}
+.admin-panel{background:rgba(255,255,255,0.08);padding:15px;margin:15px;border-radius:15px;}
 </style>
 </head>
 
 <body>
 
-<header>💎 منصة الأرباح</header>
-
-<div class="card" id="login">
-  <input id="user" placeholder="اسم المستخدم">
-  <button onclick="login()">دخول</button>
+<!-- LOGIN -->
+<div id="login" class="glass">
+  <h2>تسجيل الدخول</h2>
+  <input id="username" placeholder="اسم المستخدم">
+  <button class="btn" onclick="login()">دخول</button>
 </div>
 
+<!-- MAIN APP -->
 <div id="app" class="hidden">
 
-  <div class="card">
-    <div>رصيدك: <b id="bal">0</b> دج</div>
+  <!-- HEADER -->
+  <div class="glass">
+    <h3>👋 مرحبا <span id="user"></span></h3>
+    <p>الرصيد: <b id="balance">0</b> دج</p>
+    <canvas id="chart"></canvas>
   </div>
 
-  <!-- أيقونات -->
-  <div class="card">
-    <span class="icon" onclick="info()">ℹ️</span>
-    <span class="icon" onclick="openCharge()">💰</span>
-    <span class="icon" onclick="openWithdraw()">💸</span>
-    <span class="icon" onclick="openSupport()">💬</span>
+  <!-- DAILY TASK -->
+  <div class="glass">
+    <h3>⚡ المهام اليومية</h3>
+    <p id="taskInfo"></p>
+    <button class="btn" onclick="doTask()">تنفيذ المهمة</button>
+  </div>
+
+  <!-- LEVELS -->
+  <div class="glass">
+    <h3>⭐ المستويات</h3>
+    <ul>
+      <li>تجريبي: 0 دج / 50 دج يوميًا</li>
+      <li>الأول: 2500 دج / 70 دج</li>
+      <li>الثاني: 5200 دج / 150 دج</li>
+      <li>الثالث: 20000 دج / 500 دج</li>
+      <li>السادس: 40000 دج / 1100 دج</li>
+    </ul>
+    <button class="btn btn-outline" onclick="requestUpgrade()">طلب تفعيل مستوى</button>
+  </div>
+
+  <!-- DEPOSIT -->
+  <div class="glass">
+    <h3>💰 شحن الرصيد</h3>
+    <select id="method">
+      <option>USDT</option>
+      <option>DZD</option>
+    </select>
+    <input id="amount" placeholder="المبلغ">
+    <input type="file" id="receipt">
+    <button class="btn" onclick="deposit()">تأكيد الدفع</button>
+  </div>
+
+  <!-- WITHDRAW -->
+  <div class="glass">
+    <h3>💸 سحب الأرباح</h3>
+    <input id="withdrawAmount" placeholder="من 1000 إلى 100000 دج">
+    <button class="btn" onclick="withdraw()">طلب السحب</button>
+  </div>
+
+  <!-- REFERRAL -->
+  <div class="glass">
+    <h3>👥 الإحالة</h3>
+    <p id="ref"></p>
+  </div>
+
+  <!-- HELP -->
+  <div class="glass">
+    <h3>📘 التعليمات</h3>
+    <div id="help">
+      <p>1️⃣ للتسجيل، أدخل اسمك واضغط دخول.</p>
+      <p>2️⃣ اختر المستوى الذي ترغب بتفعيله.</p>
+      <p>3️⃣ للمهام اليومية، اضغط "تنفيذ المهمة".</p>
+      <p>4️⃣ للشحن، اختر الطريقة وأدخل المبلغ ورفع وصل الدفع ثم اضغط تأكيد الدفع.</p>
+      <p>5️⃣ للسحب، أدخل المبلغ واضغط طلب السحب.</p>
+      <p>6️⃣ للإحالة، شارك الرابط الظاهر أعلاه.</p>
+      <p>7️⃣ للانضمام لخدمة العملاء، اضغط أيقونة واتساب.</p>
+    </div>
+  </div>
+
+  <!-- CUSTOMER SERVICE -->
+  <div class="glass">
+    <h3>📞 خدمة العملاء</h3>
+    <a class="btn" href="https://chat.whatsapp.com/Cyu9IkkA8INASNJCV871J6">الانضمام</a>
   </div>
 
 </div>
 
-<!-- نافذة الشحن -->
-<div id="charge" class="card hidden">
-  <h3>شحن الرصيد</h3>
-  <select id="method" onchange="selectMethod()">
-    <option value="">اختر طريقة الشحن</option>
-    <option value="usdt">USDT</option>
-    <option value="dzd">DZD</option>
-  </select>
+<!-- ADMIN PANEL -->
+<div id="adminPanel" class="admin-panel hidden">
+  <h3>🔧 لوحة الإدارة</h3>
+  <input id="adminPass" type="password" placeholder="كلمة السر للإدارة">
+  <button class="btn" onclick="loginAdmin()">دخول الإدارة</button>
 
-  <div id="payinfo" class="hidden">
-    <div id="account"></div>
-    <input id="amount" type="number" placeholder="المبلغ">
-    <input type="file">
-    <button onclick="confirmPay()">✅ تأكيد الدفع</button>
+  <div id="adminContent" class="hidden">
+    <h4>المستخدمون</h4>
+    <ul id="userList"></ul>
+    <h4>طلب تفعيل مستوى</h4>
+    <ul id="upgradeList"></ul>
   </div>
-</div>
-
-<!-- نافذة السحب -->
-<div id="withdraw" class="card hidden">
-  <h3>سحب الأرباح</h3>
-  <input id="wamount" type="number" placeholder="المبلغ (1000 - 100000)">
-  <button onclick="sendWithdraw()">إرسال طلب السحب</button>
 </div>
 
 <script>
-let username="",balance=0;
+const ADMIN_PHONE="213XXXXXXXXX";
+const CALLMEBOT_KEY="PUT_YOUR_KEY_HERE";
+const ADMIN_PASSWORD="2026meriwhite";
 
+let userData={balance:0,level:0,lastTask:0};
+let user=localStorage.getItem("user")||"";
+
+// WhatsApp notification
+function sendWhats(msg){
+  fetch(`https://api.callmebot.com/whatsapp.php?phone=${ADMIN_PHONE}&text=${encodeURIComponent(msg)}&apikey=${CALLMEBOT_KEY}`);
+}
+
+// LOGIN
 function login(){
-  username=document.getElementById("user").value;
-  if(!username)return alert("اكتب اسمك");
+  user=username.value;
+  if(!user) return alert("أدخل اسم المستخدم");
+  localStorage.setItem("user",user);
+  if(!localStorage.getItem(user)) localStorage.setItem(user,JSON.stringify(userData));
+  init();
+}
+
+// INIT APP
+function init(){
   document.getElementById("login").classList.add("hidden");
   document.getElementById("app").classList.remove("hidden");
+  userData=JSON.parse(localStorage.getItem(user));
+  document.getElementById("user").innerText=user;
+  document.getElementById("ref").innerText=location.href+"?ref="+user;
+  updateUI();
+  drawChart();
 }
 
-function info(){
-  alert(`📌 التعليمات:
-- سجّل باسمك
-- اختر مستوى
-- أنجز المهام اليومية
-- اطلب السحب بعد استيفاء الشروط`);
+// UPDATE UI
+function updateUI(){
+  balance.innerText=userData.balance;
+  taskInfo.innerText="مهمة اليوم حسب مستواك";
 }
 
-function openSupport(){
-  window.open("https://chat.whatsapp.com/Cyu9IkkA8INASNJCV871J6");
+// TASK
+function doTask(){
+  const now=Date.now();
+  if(now-userData.lastTask<86400000){alert("تمت المهمة اليوم");return;}
+  let rewards=[50,70,150,500,1100];
+  let reward=rewards[userData.level]||50;
+  userData.balance+=reward;
+  userData.lastTask=now;
+  save();
+  sendWhats(`✅ المستخدم ${user} نفذ المهمة اليومية وربح ${reward} دج`);
+  alert("تم تنفيذ المهمة اليومية");
 }
 
-function openCharge(){
-  hideAll();document.getElementById("charge").classList.remove("hidden");
+// DEPOSIT
+function deposit(){
+  const a=amount.value;
+  const m=method.value;
+  if(!a) return alert("أدخل المبلغ");
+  sendWhats(`💰 شحن\n👤 ${user}\n💵 ${a}\n💱 ${m}`);
+  alert("تم إرسال طلب الشحن للإدارة");
 }
 
-function openWithdraw(){
-  hideAll();document.getElementById("withdraw").classList.remove("hidden");
+// WITHDRAW
+function withdraw(){
+  const a=withdrawAmount.value;
+  if(a<1000||a>100000){alert("مبلغ غير صالح");return;}
+  sendWhats(`💸 سحب\n👤 ${user}\n💵 ${a}`);
+  alert("تم إرسال طلب السحب للإدارة");
 }
 
-function hideAll(){
-  document.getElementById("charge").classList.add("hidden");
-  document.getElementById("withdraw").classList.add("hidden");
+// REQUEST LEVEL UPGRADE
+function requestUpgrade(){
+  sendWhats(`⭐ طلب تفعيل مستوى\n👤 ${user}`);
+  alert("تم إرسال طلب تفعيل المستوى للإدارة");
 }
 
-function selectMethod(){
-  let m=document.getElementById("method").value;
-  let acc=document.getElementById("account");
-  if(!m)return;
-  document.getElementById("payinfo").classList.remove("hidden");
-  if(m==="usdt"){
-    acc.innerHTML="عنوان USDT:<br><b>0xbbf80a21171e0d104e0a81a1563eda6294c987d4</b><br>(10$ - 10000$)";
-  }else{
-    acc.innerHTML="حساب DZD:<br><b>00799999001805498745</b><br>(2000 - 10000 دج)";
+// SAVE
+function save(){
+  localStorage.setItem(user,JSON.stringify(userData));
+  updateUI();
+  drawChart();
+}
+
+// CHART
+function drawChart(){
+  new Chart(chart,{type:'line',data:{labels:["اليوم"],datasets:[{data:[userData.balance],label:"الرصيد",borderColor:"#10b981",backgroundColor:"rgba(16,185,129,0.2)"}]}});
+}
+
+// ADMIN LOGIN
+function loginAdmin(){
+  const pass=document.getElementById("adminPass").value;
+  if(pass!==ADMIN_PASSWORD) return alert("كلمة السر خاطئة");
+  document.getElementById("adminContent").classList.remove("hidden");
+  populateUsers();
+}
+
+// ADMIN FUNCTIONS
+function populateUsers(){
+  const ul=document.getElementById("userList");
+  ul.innerHTML="";
+  for(let key in localStorage){
+    if(!localStorage.hasOwnProperty(key)) continue;
+    if(key===user) continue;
+    try{
+      let u=JSON.parse(localStorage.getItem(key));
+      let li=document.createElement("li");
+      li.innerHTML=`${key} - رصيد: ${u.balance} - مستوى: ${u.level} 
+      <button onclick="changeLevel('${key}')">تفعيل مستوى</button>
+      <button onclick="addBalance('${key}')">إضافة رصيد</button>`;
+      ul.appendChild(li);
+    }catch{}
   }
 }
 
-function confirmPay(){
-  let m=document.getElementById("method").value;
-  let a=document.getElementById("amount").value;
-  let msg=`السلام عليكم
-اسم المستخدم: ${username}
-طريقة الشحن: ${m}
-المبلغ: ${a}
-تم رفع وصل الشحن`;
-  window.open("https://wa.me/?text="+encodeURIComponent(msg));
+// ADMIN CHANGE LEVEL
+function changeLevel(u){
+  let data=JSON.parse(localStorage.getItem(u));
+  data.level+=1;
+  localStorage.setItem(u,JSON.stringify(data));
+  alert("تم تفعيل المستوى للمستخدم "+u);
+  populateUsers();
 }
 
-function sendWithdraw(){
-  let a=document.getElementById("wamount").value;
-  if(a<1000||a>100000)return alert("مبلغ غير صالح");
-  let msg=`طلب سحب
-المستخدم: ${username}
-المبلغ: ${a}`;
-  window.open("https://wa.me/?text="+encodeURIComponent(msg));
+// ADMIN ADD BALANCE
+function addBalance(u){
+  let data=JSON.parse(localStorage.getItem(u));
+  let amt=prompt("أدخل المبلغ المراد إضافته");
+  data.balance+=parseInt(amt||0);
+  localStorage.setItem(u,JSON.stringify(data));
+  alert("تم إضافة الرصيد");
+  populateUsers();
 }
+
+// INIT IF USER LOGGED
+if(user)localStorage.getItem(user)&&init();
 </script>
 
 </body>
