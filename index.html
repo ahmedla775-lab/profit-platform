@@ -2,60 +2,81 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>منصة الأرباح</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Tahoma, Arial, sans-serif;
-      background: #0f172a;
-      color: #fff;
-    }
-    header {
-      background: #020617;
-      padding: 15px;
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-    }
-    .container {
-      padding: 15px;
-    }
-    .card {
-      background: #020617;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 15px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
-    }
-    .balance {
-      font-size: 26px;
-      font-weight: bold;
-      color: #22c55e;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      background: #2563eb;
-      color: #fff;
-      font-size: 16px;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-    button:active {
-      background: #1d4ed8;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>منصة الأرباح</title>
+
+<!-- Cairo Font -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Cairo', sans-serif;
+  background: #0F172A;
+  color: #F8FAFC;
+}
+header {
+  background: #1E293B;
+  padding: 20px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+.container {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+.card {
+  background: rgba(30,41,59,0.8);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 0 20px rgba(16,185,129,0.3);
+  transition: transform 0.2s;
+}
+.card:hover {
+  transform: translateY(-5px);
+}
+.balance {
+  font-size: 28px;
+  font-weight: 700;
+  color: #10B981;
+}
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 15px;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+button.primary {
+  background: #10B981;
+  color: #fff;
+}
+button.primary:active {
+  transform: scale(0.95);
+}
+button.secondary {
+  background: #F59E0B;
+  color: #000;
+}
+button.secondary:active {
+  transform: scale(0.95);
+}
+</style>
 </head>
 <body>
 
 <header>💎 منصة الأرباح</header>
 
 <div class="container">
-
   <div class="card">
     <div>رصيدك الحالي</div>
     <div class="balance" id="balance">0.00 دج</div>
@@ -64,42 +85,40 @@
   <div class="card">
     <div>مهمة اليوم</div>
     <p>اضغط على الزر لإتمام المهمة</p>
-    <button onclick="completeTask()">إتمام المهمة</button>
+    <button class="primary" onclick="completeTask()">إتمام المهمة</button>
   </div>
 
   <div class="card">
     <div>السحب</div>
-    <button onclick="withdraw()">طلب سحب</button>
+    <button class="secondary" onclick="withdraw()">طلب سحب</button>
   </div>
-
 </div>
 
 <script>
-  let balance = localStorage.getItem("balance")
-    ? parseFloat(localStorage.getItem("balance"))
-    : 0;
+let balance = localStorage.getItem("balance")
+  ? parseFloat(localStorage.getItem("balance"))
+  : 0;
 
-  function updateUI() {
-    document.getElementById("balance").innerText =
-      balance.toFixed(2) + " دج";
-  }
+function updateUI() {
+  document.getElementById("balance").innerText = balance.toFixed(2) + " دج";
+}
 
-  function completeTask() {
-    balance += 50;
-    localStorage.setItem("balance", balance);
-    updateUI();
-    alert("تمت إضافة 50 دج إلى رصيدك ✅");
-  }
-
-  function withdraw() {
-    if (balance < 500) {
-      alert("❌ الحد الأدنى للسحب هو 500 دج");
-    } else {
-      alert("✅ تم إرسال طلب السحب (تجريبي)");
-    }
-  }
-
+function completeTask() {
+  balance += 50;
+  localStorage.setItem("balance", balance);
   updateUI();
+  alert("✅ تمت إضافة 50 دج إلى رصيدك");
+}
+
+function withdraw() {
+  if(balance < 500) {
+    alert("❌ الحد الأدنى للسحب هو 500 دج");
+  } else {
+    alert("✅ تم إرسال طلب السحب (تجريبي)");
+  }
+}
+
+updateUI();
 </script>
 
 </body>
