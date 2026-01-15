@@ -1,278 +1,182 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>Profit Platform</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- FONT -->
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-<!-- ICONS -->
-<link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
-<!-- CHART -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<title>منصة الأرباح | Profit Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-/* BODY & FONTS */
-body{margin:0;font-family:'Cairo',sans-serif;background:#0B0C1A;color:#E0E0FF;}
-
-/* GLASSMORPHISM BASE */
-.glass{background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);border-radius:20px;padding:15px;margin:15px;box-shadow:0 0 25px rgba(0,245,160,0.3);}
-
-/* BUTTONS */
-.btn{background:linear-gradient(135deg,#00F5A0,#00FFFF);border:none;padding:12px;width:100%;border-radius:999px;color:#0B0C1A;font-weight:bold;cursor:pointer;margin-top:10px;transition:all 0.3s;}
-.btn:hover{box-shadow:0 0 20px #00FFFF,0 0 40px #00F5A0;transform:translateY(-3px);}
-.btn-outline{background:transparent;border:1px solid #00F5A0;color:#00F5A0;}
-
-/* ICONS */
-.icon{font-size:28px;}
-
-/* INPUTS */
-input,select{width:100%;padding:10px;border-radius:12px;border:none;margin-top:8px;background:rgba(255,255,255,0.05);color:#E0E0FF;}
-
-/* HIDDEN CLASS */
-.hidden{display:none;}
-
-/* ADMIN PANEL */
-.admin-panel{background:rgba(255,255,255,0.08);padding:15px;margin:15px;border-radius:15px;}
-
-/* LANGUAGE SELECT */
-#langSelect{position:fixed;top:10px;left:10px;padding:5px 10px;border-radius:10px;border:none;background:rgba(0,245,160,0.2);color:#E0E0FF;z-index:999;}
-
-/* BALANCE CARD */
-#balanceCard{background:linear-gradient(135deg,#00F5A0,#00FFFF);color:#0B0C1A;box-shadow:0 0 25px #00F5A0;border-radius:20px;padding:15px;margin:15px;text-align:center;font-weight:bold;font-size:1.2em;}
+  body{margin:0;font-family:'Cairo',sans-serif;background:#0F172A;color:#F8FAFC;}
+  .hidden{display:none;}
+  .btn{padding:0.75rem 1.5rem;border-radius:9999px;font-weight:bold;cursor:pointer;transition:all 0.2s;}
+  .btn-primary{background:#10B981;color:#fff;box-shadow:0 0 20px rgba(16,185,129,0.3);}
+  .btn-secondary{background:#F59E0B;color:#000;box-shadow:0 0 20px rgba(245,158,11,0.3);}
+  .card{background:rgba(30,41,59,0.7);backdrop-filter:blur(12px);border-radius:1.5rem;padding:1.5rem;margin:1rem 0;position:relative;transition:all 0.2s;}
+  .card:hover{box-shadow:0 0 20px rgba(255,255,255,0.1);}
+  select,input{padding:0.5rem 1rem;border-radius:1rem;border:none;background:#1E293B;color:#F8FAFC;margin:0.25rem 0;}
+  .language-switch{position:absolute;top:1rem;left:1rem;}
 </style>
 </head>
-
 <body>
+<div class="language-switch">
+  <select id="languageSelect">
+    <option value="ar">العربية</option>
+    <option value="fr">Français</option>
+    <option value="en">English</option>
+  </select>
+</div>
 
-<!-- LANGUAGE SELECT -->
-<select id="langSelect" onchange="changeLang(this.value)">
-  <option value="ar">العربية</option>
-  <option value="fr">Français</option>
-  <option value="en">English</option>
-</select>
-
-<!-- LOGIN -->
-<div id="login" class="glass">
-  <h2 data-text="login">تسجيل الدخول</h2>
+<!-- ======= تسجيل الدخول ======= -->
+<div id="login">
+  <h2>تسجيل الدخول / التسجيل</h2>
   <input id="username" placeholder="اسم المستخدم">
-  <button class="btn" onclick="login()" data-text="loginBtn">دخول</button>
+  <input id="password" type="password" placeholder="كلمة السر">
+  <button class="btn btn-primary" onclick="login()">دخول</button>
 </div>
 
-<!-- MAIN APP -->
+<!-- ======= التطبيق ======= -->
 <div id="app" class="hidden">
+  <h1 id="welcome"></h1>
+  <button class="btn btn-secondary" onclick="logout()">تسجيل خروج</button>
 
-  <!-- BALANCE -->
-  <div id="balanceCard">
-    مرحبا <span id="user"></span><br>
-    الرصيد: <b id="balance">0</b> دج
+  <!-- رصيد المستخدم -->
+  <div class="card">
+    <h3>الرصيد</h3>
+    <p id="balance">0 دج</p>
   </div>
 
-  <!-- DAILY TASK -->
-  <div class="glass">
-    <h3 data-text="dailyTask">⚡ المهام اليومية</h3>
-    <p id="taskInfo"></p>
-    <button class="btn" onclick="doTask()" data-text="doTaskBtn">تنفيذ المهمة</button>
-  </div>
+  <!-- المستويات والمهام -->
+  <div id="levels"></div>
 
-  <!-- LEVELS -->
-  <div class="glass">
-    <h3 data-text="levels">⭐ المستويات</h3>
-    <ul>
-      <li>تجريبي: 0 دج / 50 دج يوميًا</li>
-      <li>الأول: 2500 دج / 70 دج</li>
-      <li>الثاني: 5200 دج / 150 دج</li>
-      <li>الثالث: 20000 دج / 500 دج</li>
-      <li>السادس: 40000 دج / 1100 دج</li>
-    </ul>
-    <button class="btn btn-outline" onclick="requestUpgrade()" data-text="requestLevel">طلب تفعيل مستوى</button>
-  </div>
-
-  <!-- DEPOSIT -->
-  <div class="glass">
-    <h3 data-text="deposit">💰 شحن الرصيد</h3>
+  <!-- شحن -->
+  <div class="card">
+    <h3>شحن الرصيد</h3>
     <select id="method">
-      <option>USDT</option>
-      <option>DZD</option>
+      <option value="USDT">USDT</option>
+      <option value="DZD">DZD</option>
     </select>
-    <input id="amount" placeholder="المبلغ">
-    <input type="file" id="receipt">
-    <button class="btn" onclick="deposit()" data-text="confirmDeposit">تأكيد الدفع</button>
+    <input type="number" id="amount" placeholder="المبلغ">
+    <input type="file" id="depositReceipt">
+    <button class="btn btn-primary" onclick="deposit()">تأكيد الدفع</button>
   </div>
 
-  <!-- WITHDRAW -->
-  <div class="glass">
-    <h3 data-text="withdraw">💸 سحب الأرباح</h3>
-    <input id="withdrawAmount" placeholder="من 1000 إلى 100000 دج">
-    <button class="btn" onclick="withdraw()" data-text="withdrawBtn">طلب السحب</button>
+  <!-- سحب -->
+  <div class="card">
+    <h3>سحب الأرباح</h3>
+    <input type="number" id="withdrawAmount" placeholder="المبلغ (1000 - 100000 دج)">
+    <button class="btn btn-secondary" onclick="withdraw()">طلب السحب</button>
   </div>
 
-  <!-- REFERRAL -->
-  <div class="glass">
-    <h3 data-text="referral">👥 الإحالة</h3>
-    <p id="ref"></p>
-  </div>
-
-  <!-- HELP -->
-  <div class="glass">
-    <h3 data-text="help">📘 التعليمات</h3>
-    <div id="help">
-      <p data-text="step1">1️⃣ للتسجيل، أدخل اسمك واضغط دخول.</p>
-      <p data-text="step2">2️⃣ اختر المستوى الذي ترغب بتفعيله.</p>
-      <p data-text="step3">3️⃣ للمهام اليومية، اضغط "تنفيذ المهمة".</p>
-      <p data-text="step4">4️⃣ للشحن، اختر الطريقة وأدخل المبلغ ورفع وصل الدفع ثم اضغط تأكيد الدفع.</p>
-      <p data-text="step5">5️⃣ للسحب، أدخل المبلغ واضغط طلب السحب.</p>
-      <p data-text="step6">6️⃣ للإحالة، شارك الرابط الظاهر أعلاه.</p>
-      <p data-text="step7">7️⃣ للانضمام لخدمة العملاء، اضغط أيقونة واتساب.</p>
-    </div>
-  </div>
-
-  <!-- CUSTOMER SERVICE -->
-  <div class="glass">
-    <h3 data-text="customer">📞 خدمة العملاء</h3>
-    <a class="btn" href="https://chat.whatsapp.com/Cyu9IkkA8INASNJCV871J6">الانضمام</a>
-  </div>
-
-</div>
-
-<!-- ADMIN PANEL -->
-<div id="adminPanel" class="admin-panel hidden">
-  <h3>🔧 لوحة الإدارة</h3>
-  <input id="adminPass" type="password" placeholder="كلمة السر للإدارة">
-  <button class="btn" onclick="loginAdmin()">دخول الإدارة</button>
-
-  <div id="adminContent" class="hidden">
-    <h4>المستخدمون</h4>
-    <ul id="userList"></ul>
-    <h4>طلب تفعيل مستوى</h4>
-    <ul id="upgradeList"></ul>
+  <!-- تعليمات -->
+  <div class="card">
+    <h3>التعليمات</h3>
+    <p>لشحن الرصيد: اختر طريقة الشحن، أدخل المبلغ وارفع وصل الدفع ثم اضغط على تأكيد الدفع.</p>
+    <p>للسحب: أدخل المبلغ ثم اضغط على طلب السحب.</p>
+    <p>للمزيد من الدعم: <a href="https://chat.whatsapp.com/Cyu9IkkA8INASNJCV871J6" target="_blank">خدمة العملاء</a></p>
   </div>
 </div>
 
 <script>
-// ===================== DATA =====================
-const ADMIN_PHONE="213XXXXXXXXX";
-const CALLMEBOT_KEY="PUT_YOUR_KEY_HERE";
-const ADMIN_PASSWORD="2026meriwhite";
+// ======= بيانات المستخدم + مستويات =======
+let user="",userData={};
+const levels=[
+  {name:"تجريبي",deposit:0,daily:50,duration:10},
+  {name:"المستوى 1",deposit:2500,daily:70,duration:360},
+  {name:"المستوى 2",deposit:5200,daily:150,duration:360},
+  {name:"المستوى 3",deposit:20000,daily:500,duration:360},
+  {name:"المستوى 4",deposit:40000,daily:1100,duration:360},
+];
 
-let userData={balance:0,level:0,lastTask:0};
-let user=localStorage.getItem("user")||"";
-
-// ===================== LANGUAGE =====================
-const langData={
-  ar:{login:"تسجيل الدخول",loginBtn:"دخول",dailyTask:"⚡ المهام اليومية",doTaskBtn:"تنفيذ المهمة",
-       levels:"⭐ المستويات",requestLevel:"طلب تفعيل مستوى",deposit:"💰 شحن الرصيد",confirmDeposit:"تأكيد الدفع",
-       withdraw:"💸 سحب الأرباح",withdrawBtn:"طلب السحب",referral:"👥 الإحالة",help:"📘 التعليمات",
-       step1:"1️⃣ للتسجيل، أدخل اسمك واضغط دخول.",
-       step2:"2️⃣ اختر المستوى الذي ترغب بتفعيله.",
-       step3:"3️⃣ للمهام اليومية، اضغط \"تنفيذ المهمة\".",
-       step4:"4️⃣ للشحن، اختر الطريقة وأدخل المبلغ ورفع وصل الدفع ثم اضغط تأكيد الدفع.",
-       step5:"5️⃣ للسحب، أدخل المبلغ واضغط طلب السحب.",
-       step6:"6️⃣ للإحالة، شارك الرابط الظاهر أعلاه.",
-       step7:"7️⃣ للانضمام لخدمة العملاء، اضغط أيقونة واتساب.",
-       customer:"📞 خدمة العملاء"},
-  fr:{login:"Connexion",loginBtn:"Entrer",dailyTask:"⚡ Tâches quotidiennes",doTaskBtn:"Exécuter",
-      levels:"⭐ Niveaux",requestLevel:"Demander niveau",deposit:"💰 Recharger",confirmDeposit:"Confirmer",
-      withdraw:"💸 Retrait",withdrawBtn:"Demander retrait",referral:"👥 Parrainage",help:"📘 Instructions",
-      step1:"1️⃣ Pour s'inscrire, entrez votre nom et appuyez sur Entrer.",
-      step2:"2️⃣ Choisissez le niveau à activer.",
-      step3:"3️⃣ Pour la tâche quotidienne, appuyez sur Exécuter.",
-      step4:"4️⃣ Pour recharger, choisissez la méthode, entrez le montant, téléchargez le reçu, puis confirmez.",
-      step5:"5️⃣ Pour retirer, entrez le montant et appuyez sur Demander retrait.",
-      step6:"6️⃣ Pour le parrainage, partagez le lien ci-dessus.",
-      step7:"7️⃣ Pour le service client, appuyez sur l'icône WhatsApp.",
-      customer:"📞 Service client"},
-  en:{login:"Login",loginBtn:"Enter",dailyTask:"⚡ Daily Tasks",doTaskBtn:"Do Task",
-      levels:"⭐ Levels",requestLevel:"Request Level",deposit:"💰 Deposit",confirmDeposit:"Confirm",
-      withdraw:"💸 Withdraw",withdrawBtn:"Request Withdraw",referral:"👥 Referral",help:"📘 Help",
-      step1:"1️⃣ To register, enter your name and press Enter.",
-      step2:"2️⃣ Choose level to activate.",
-      step3:"3️⃣ For daily task, press Do Task.",
-      step4:"4️⃣ To deposit, choose method, enter amount, upload receipt and press Confirm.",
-      step5:"5️⃣ To withdraw, enter amount and press Request Withdraw.",
-      step6:"6️⃣ For referral, share the link above.",
-      step7:"7️⃣ For customer support, press WhatsApp icon.",
-      customer:"📞 Customer Support"}
-};
-
-function changeLang(l){
-  document.querySelectorAll("[data-text]").forEach(el=>{
-    const key=el.getAttribute("data-text");
-    if(langData[l][key]) el.innerText=langData[l][key];
-  });
-}
-
-// ===================== LOGIN =====================
+// ======= تسجيل الدخول / الخروج =======
 function login(){
-  user=username.value;
-  if(!user) return alert("أدخل اسم المستخدم");
-  localStorage.setItem("user",user);
-  if(!localStorage.getItem(user)) localStorage.setItem(user,JSON.stringify(userData));
+  const name=document.getElementById("username").value.trim();
+  const pass=document.getElementById("password").value.trim();
+  if(!name || !pass) return alert("أدخل اسم المستخدم وكلمة السر");
+
+  let users=JSON.parse(localStorage.getItem("users")||"{}");
+  if(users[name]){
+    if(users[name].pass!==pass) return alert("كلمة السر خاطئة");
+    user=name; userData=users[name];
+  } else {
+    user=name; userData={balance:0,level:0,lastTask:0,pass:pass};
+    users[name]=userData;
+    localStorage.setItem("users",JSON.stringify(users));
+  }
+  localStorage.setItem("currentUser",user);
   init();
 }
 
-// ===================== INIT APP =====================
+function logout(){
+  localStorage.removeItem("currentUser");
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("login").classList.remove("hidden");
+}
+
+// ======= تهيئة التطبيق =======
 function init(){
   document.getElementById("login").classList.add("hidden");
   document.getElementById("app").classList.remove("hidden");
-  userData=JSON.parse(localStorage.getItem(user));
-  document.getElementById("user").innerText=user;
-  document.getElementById("ref").innerText=location.href+"?ref="+user;
-  updateUI();
+  document.getElementById("welcome").innerText=`مرحباً ${user}`;
+  document.getElementById("balance").innerText=`${userData.balance} دج`;
+
+  renderLevels();
 }
 
-// ===================== UPDATE UI =====================
-function updateUI(){
-  balance.innerText=userData.balance;
-  taskInfo.innerText="مهمة اليوم حسب مستواك";
+// ======= عرض المستويات =======
+function renderLevels(){
+  const container=document.getElementById("levels");
+  container.innerHTML="";
+  levels.forEach((lvl,i)=>{
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`<h3>${lvl.name}</h3>
+      <p>الإيداع: ${lvl.deposit} دج</p>
+      <p>المهمة اليومية: ${lvl.daily} دج</p>
+      <p>مدة المستوى: ${lvl.duration} يوم</p>
+      <button class="btn btn-primary" onclick="activateLevel(${i})">تفعيل المستوى</button>`;
+    container.appendChild(card);
+  });
 }
 
-// ===================== TASK =====================
-function doTask(){
-  const now=Date.now();
-  if(now-userData.lastTask<86400000){alert("تمت المهمة اليوم");return;}
-  let rewards=[50,70,150,500,1100];
-  let reward=rewards[userData.level]||50;
-  userData.balance+=reward;
-  userData.lastTask=now;
-  save();
-  alert("تم تنفيذ المهمة اليومية");
+// ======= تفعيل المستوى (رسالة واتساب للإدارة) =======
+function activateLevel(idx){
+  const lvl=levels[idx];
+  const msg=`⭐ طلب تفعيل مستوى\nالمستخدم: ${user}\nالمستوى: ${lvl.name}`;
+  notifyAdmin(msg);
+  alert("تم فتح WhatsApp لإرسال طلب تفعيل المستوى للإدارة");
 }
 
-// ===================== DEPOSIT =====================
+// ======= شحن الرصيد =======
 function deposit(){
-  const a=amount.value;
-  const m=method.value;
-  if(!a) return alert("أدخل المبلغ");
-  alert("تم إرسال طلب الشحن للإدارة");
+  const amount=document.getElementById("amount").value;
+  const method=document.getElementById("method").value;
+  if(!amount) return alert("أدخل المبلغ");
+  const msg=`💰 طلب شحن رصيد\nالمستخدم: ${user}\nطريقة الشحن: ${method}\nالمبلغ: ${amount}`;
+  notifyAdmin(msg);
+  alert("تم فتح WhatsApp لإرسال طلب الشحن للإدارة");
 }
 
-// ===================== WITHDRAW =====================
+// ======= سحب الأرباح =======
 function withdraw(){
-  const a=withdrawAmount.value;
-  if(a<1000||a>100000){alert("مبلغ غير صالح");return;}
-  alert("تم إرسال طلب السحب للإدارة");
+  const amount=document.getElementById("withdrawAmount").value;
+  if(amount<1000||amount>100000){alert("المبلغ غير صالح");return;}
+  const msg=`💸 طلب سحب أرباح\nالمستخدم: ${user}\nالمبلغ: ${amount} دج`;
+  notifyAdmin(msg);
+  alert("تم فتح WhatsApp لإرسال طلب السحب للإدارة");
 }
 
-// ===================== REQUEST LEVEL =====================
-function requestUpgrade(){
-  alert("تم إرسال طلب تفعيل المستوى للإدارة");
+// ======= إشعارات واتساب =======
+function notifyAdmin(message){
+  const adminNumber="213660624409"; // رقم WhatsApp Business
+  const url=`https://wa.me/${adminNumber}?text=${encodeURIComponent(message)}`;
+  window.open(url,"_blank");
 }
 
-// ===================== SAVE =====================
-function save(){
-  localStorage.setItem(user,JSON.stringify(userData));
-  updateUI();
-}
-
-// ===================== ADMIN LOGIN =====================
-function loginAdmin(){
-  const pass=document.getElementById("adminPass").value;
-  if(pass!==ADMIN_PASSWORD) return alert("كلمة السر خاطئة");
-  document.getElementById("adminContent").classList.remove("hidden");
-}
+// ======= اختيار اللغة =======
+document.getElementById("languageSelect").addEventListener("change",e=>{
+  const lang=e.target.value;
+  if(lang==="ar"){document.documentElement.lang="ar";document.body.dir="rtl";}
+  else{document.documentElement.lang=lang;document.body.dir="ltr";}
+});
 </script>
-
-</body>
-</html>
