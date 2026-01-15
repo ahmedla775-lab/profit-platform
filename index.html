@@ -2,74 +2,23 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>منصة الأرباح</title>
-
-<!-- Cairo Font -->
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-body {
-  margin: 0;
-  font-family: 'Cairo', sans-serif;
-  background: #0F172A;
-  color: #F8FAFC;
-}
-header {
-  background: #1E293B;
-  padding: 20px;
-  text-align: center;
-  font-size: 24px;
-  font-weight: 700;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-}
-.container {
-  padding: 20px;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-}
-.card {
-  background: rgba(30,41,59,0.8);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 0 20px rgba(16,185,129,0.3);
-  transition: transform 0.2s;
-}
-.card:hover {
-  transform: translateY(-5px);
-}
-.balance {
-  font-size: 28px;
-  font-weight: 700;
-  color: #10B981;
-}
-button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 16px;
-  margin-top: 15px;
-  cursor: pointer;
-  transition: transform 0.1s;
-}
-button.primary {
-  background: #10B981;
-  color: #fff;
-}
-button.primary:active {
-  transform: scale(0.95);
-}
-button.secondary {
-  background: #F59E0B;
-  color: #000;
-}
-button.secondary:active {
-  transform: scale(0.95);
-}
+body { margin:0; font-family:'Cairo', sans-serif; background:#0F172A; color:#F8FAFC;}
+header { background:#1E293B; padding:20px; text-align:center; font-size:24px; font-weight:700; }
+.container { padding:20px; display:grid; gap:20px; }
+.card { background: rgba(30,41,59,0.8); border-radius:16px; padding:20px; box-shadow:0 0 20px rgba(16,185,129,0.3); transition:transform 0.2s;}
+.card:hover { transform:translateY(-5px);}
+.balance { font-size:28px; font-weight:700; color:#10B981; }
+input, button { width:100%; padding:12px; margin-top:10px; border-radius:12px; border:none; font-size:16px;}
+button.primary { background:#10B981; color:#fff;}
+button.secondary { background:#F59E0B; color:#000;}
+button:active { transform:scale(0.95);}
+.hidden { display:none; }
 </style>
 </head>
 <body>
@@ -77,48 +26,122 @@ button.secondary:active {
 <header>💎 منصة الأرباح</header>
 
 <div class="container">
-  <div class="card">
-    <div>رصيدك الحالي</div>
-    <div class="balance" id="balance">0.00 دج</div>
+
+  <!-- تسجيل الدخول -->
+  <div class="card" id="auth-card">
+    <h3>تسجيل الدخول / إنشاء حساب</h3>
+    <input type="email" id="email" placeholder="البريد الإلكتروني">
+    <input type="password" id="password" placeholder="كلمة المرور">
+    <button class="primary" onclick="signup()">إنشاء حساب</button>
+    <button class="secondary" onclick="login()">تسجيل الدخول</button>
   </div>
 
-  <div class="card">
-    <div>مهمة اليوم</div>
-    <p>اضغط على الزر لإتمام المهمة</p>
-    <button class="primary" onclick="completeTask()">إتمام المهمة</button>
+  <!-- المنصة -->
+  <div id="platform" class="hidden">
+    <div class="card">
+      <div>رصيدك الحالي</div>
+      <div class="balance" id="balance">0.00 دج</div>
+      <button class="secondary" onclick="logout()">تسجيل الخروج</button>
+    </div>
+
+    <div class="card">
+      <div>مهمة اليوم</div>
+      <p>اضغط على الزر لإتمام المهمة</p>
+      <button class="primary" onclick="completeTask()">إتمام المهمة</button>
+    </div>
   </div>
 
-  <div class="card">
-    <div>السحب</div>
-    <button class="secondary" onclick="withdraw()">طلب سحب</button>
-  </div>
 </div>
 
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
-let balance = localStorage.getItem("balance")
-  ? parseFloat(localStorage.getItem("balance"))
-  : 0;
+const firebaseConfig = {
+  apiKey: "ضع هنا apiKey",
+  authDomain: "ضع هنا authDomain",
+  projectId: "ضع هنا projectId",
+  storageBucket: "ضع هنا storageBucket",
+  messagingSenderId: "ضع هنا messagingSenderId",
+  appId: "ضع هنا appId"
+};
 
-function updateUI() {
-  document.getElementById("balance").innerText = balance.toFixed(2) + " دج";
-}
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-function completeTask() {
-  balance += 50;
-  localStorage.setItem("balance", balance);
-  updateUI();
-  alert("✅ تمت إضافة 50 دج إلى رصيدك");
-}
+let user = null;
 
-function withdraw() {
-  if(balance < 500) {
-    alert("❌ الحد الأدنى للسحب هو 500 دج");
+// تحديث واجهة المنصة
+function updateUI(balance=0){
+  document.getElementById("balance").innerText = balance.toFixed(2)+" دج";
+  if(user){
+    document.getElementById("auth-card").classList.add("hidden");
+    document.getElementById("platform").classList.remove("hidden");
   } else {
-    alert("✅ تم إرسال طلب السحب (تجريبي)");
+    document.getElementById("auth-card").classList.remove("hidden");
+    document.getElementById("platform").classList.add("hidden");
   }
 }
 
-updateUI();
+// إنشاء حساب
+function signup(){
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  auth.createUserWithEmailAndPassword(email,password)
+    .then(cred => {
+      user = cred.user;
+      db.collection("users").doc(user.uid).set({balance:0});
+      updateUI(0);
+      alert("تم إنشاء الحساب بنجاح ✅");
+    })
+    .catch(err=>alert(err.message));
+}
+
+// تسجيل الدخول
+function login(){
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  auth.signInWithEmailAndPassword(email,password)
+    .then(cred => {
+      user = cred.user;
+      db.collection("users").doc(user.uid).get()
+        .then(doc => {
+          updateUI(doc.data().balance);
+        });
+    })
+    .catch(err=>alert(err.message));
+}
+
+// تسجيل الخروج
+function logout(){
+  auth.signOut().then(()=>{ user=null; updateUI(0); });
+}
+
+// إتمام مهمة اليوم
+function completeTask(){
+  const docRef = db.collection("users").doc(user.uid);
+  docRef.get().then(doc=>{
+    let current = doc.data().balance;
+    current +=50;
+    docRef.update({balance:current});
+    updateUI(current);
+    alert("✅ تمت إضافة 50 دج إلى رصيدك");
+  });
+}
+
+// تحديث الواجهة عند تحميل الصفحة
+auth.onAuthStateChanged(u=>{
+  if(u){
+    user=u;
+    db.collection("users").doc(user.uid).get().then(doc=>updateUI(doc.data().balance));
+  } else {
+    user=null;
+    updateUI(0);
+  }
+});
 </script>
 
 </body>
