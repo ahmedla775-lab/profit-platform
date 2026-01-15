@@ -1,13 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>منصة الأرباح المتكاملة</title>
+<title>منصة الأرباح التجريبية</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-
-<!-- Chart.js للرسم البياني -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -37,17 +34,15 @@ button:active { transform:scale(0.95);}
 </head>
 <body>
 
-<header>💎 منصة الأرباح المتكاملة</header>
+<header>💎 منصة الأرباح التجريبية</header>
 
 <div class="container">
 
-  <!-- تسجيل الدخول -->
+  <!-- تسجيل الدخول وهمي -->
   <div class="card" id="auth-card">
     <h3>تسجيل الدخول / إنشاء حساب</h3>
-    <input type="email" id="email" placeholder="البريد الإلكتروني">
-    <input type="password" id="password" placeholder="كلمة المرور">
-    <button class="primary" onclick="signup()">إنشاء حساب</button>
-    <button class="secondary" onclick="login()">تسجيل الدخول</button>
+    <input type="text" id="username" placeholder="اسم المستخدم">
+    <button class="primary" onclick="login()">دخول</button>
   </div>
 
   <!-- المنصة -->
@@ -55,7 +50,7 @@ button:active { transform:scale(0.95);}
 
     <div class="card">
       <div>رصيدك الحالي</div>
-      <div class="balance" id="balance">0.00 دج</div>
+      <div class="balance" id="balance">0 دج</div>
       <button class="secondary" onclick="logout()">تسجيل الخروج</button>
     </div>
 
@@ -93,34 +88,14 @@ button:active { transform:scale(0.95);}
 
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
 <script>
 // =======================
-// إعداد Firebase
+// بيانات وهمية للتجربة
 // =======================
-const firebaseConfig = {
-  apiKey: "ضع هنا apiKey",
-  authDomain: "ضع هنا authDomain",
-  projectId: "ضع هنا projectId",
-  storageBucket: "ضع هنا storageBucket",
-  messagingSenderId: "ضع هنا messagingSenderId",
-  appId: "ضع هنا appId"
-};
-
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
 let user = null;
 let balance = 0;
 let balanceHistory = [];
 
-// =======================
-// المستويات والإيداع
-// =======================
 const levels = [
   {id:0, name:"تجريبي", deposit:0, daily:50, duration:10},
   {id:1, name:"المستوى 1", deposit:2500, daily:70, duration:360},
@@ -130,21 +105,36 @@ const levels = [
 ];
 
 // =======================
-// تحديث واجهة المنصة
+// تسجيل الدخول وهمي
 // =======================
-function updateUI(b=0){
-  balance = b;
-  document.getElementById("balance").innerText = balance.toFixed(2)+" دج";
-  if(user){
-    document.getElementById("auth-card").classList.add("hidden");
-    document.getElementById("platform").classList.remove("hidden");
-    renderLevels();
-    renderTasks();
-    renderChart();
-  } else {
-    document.getElementById("auth-card").classList.remove("hidden");
-    document.getElementById("platform").classList.add("hidden");
-  }
+function login(){
+  const name = document.getElementById("username").value;
+  if(!name){ alert("أدخل اسم المستخدم"); return; }
+  user = name;
+  if(!localStorage.getItem("balance-"+user)) localStorage.setItem("balance-"+user,0);
+  balance = parseInt(localStorage.getItem("balance-"+user));
+  updateUI();
+}
+
+// =======================
+// تسجيل الخروج
+// =======================
+function logout(){
+  user=null;
+  document.getElementById("platform").classList.add("hidden");
+  document.getElementById("auth-card").classList.remove("hidden");
+}
+
+// =======================
+// تحديث واجهة المستخدم
+// =======================
+function updateUI(){
+  document.getElementById("auth-card").classList.add("hidden");
+  document.getElementById("platform").classList.remove("hidden");
+  document.getElementById("balance").innerText = balance + " دج";
+  renderLevels();
+  renderTasks();
+  renderChart();
 }
 
 // =======================
@@ -153,8 +143,8 @@ function updateUI(b=0){
 function renderLevels(){
   const container = document.getElementById("levels-container");
   container.innerHTML="";
+  const userLevel = parseInt(localStorage.getItem("level-"+user))||0;
   levels.forEach(l=>{
-    const userLevel = parseInt(localStorage.getItem("user-level-"+user.uid)) || 0;
     container.innerHTML += `
       <div style="margin-bottom:8px;">
         <span>${l.name} - إيداع: ${l.deposit} دج - مكافأة يومية: ${l.daily} دج</span>
@@ -167,32 +157,29 @@ function renderLevels(){
 }
 
 // =======================
-// دفع الإيداع
+// دفع الإيداع وهمي
 // =======================
 function payLevel(levelId){
   const level = levels.find(l=>l.id===levelId);
-  if(balance<level.deposit && level.deposit>0){
-    alert(`رصيدك غير كافٍ لدفع الإيداع (${level.deposit} دج)`);
-    return;
-  }
+  if(balance<level.deposit){ alert(`رصيدك غير كافٍ لدفع الإيداع (${level.deposit} دج)`); return; }
   balance -= level.deposit;
-  localStorage.setItem("user-level-"+user.uid, level.id);
-  db.collection("users").doc(user.uid).update({balance});
-  updateUI(balance);
+  localStorage.setItem("level-"+user, level.id);
+  localStorage.setItem("balance-"+user,balance);
+  updateUI();
   alert(`✅ تم دفع الإيداع للمستوى ${level.name}`);
 }
 
 // =======================
-// المهام اليومية مع مؤقت إعادة التفعيل
+// المهام اليومية مع مؤقت
 // =======================
 function renderTasks(){
   const container = document.getElementById("tasks-container");
   container.innerHTML="";
-  const userLevel = parseInt(localStorage.getItem("user-level-"+user.uid)) || 0;
   const today = new Date().toDateString();
+  const userLevel = parseInt(localStorage.getItem("level-"+user))||0;
 
   levels.filter(l=>l.id<=userLevel).forEach(level=>{
-    const taskKey = `task-${level.id}-${user.uid}-${today}`;
+    const taskKey = `task-${level.id}-${user}-${today}`;
     const done = localStorage.getItem(taskKey);
     container.innerHTML += `
       <div style="margin-bottom:10px;">
@@ -208,150 +195,66 @@ function renderTasks(){
 function completeTask(levelId){
   const level = levels.find(l=>l.id===levelId);
   const today = new Date().toDateString();
-  const taskKey = `task-${level.id}-${user.uid}-${today}`;
+  const taskKey = `task-${level.id}-${user}-${today}`;
   if(localStorage.getItem(taskKey)) return;
   balance += level.daily;
   localStorage.setItem(taskKey,"done");
-  balanceHistory.push({date:today,balance});
-  db.collection("users").doc(user.uid).update({balance});
-  updateUI(balance);
+  localStorage.setItem("balance-"+user,balance);
+  updateUI();
   alert(`✅ تمت إضافة ${level.daily} دج`);
 }
 
-// إعادة تفعيل المهام تلقائيًا كل يوم
-setInterval(()=>{
-  const today = new Date().toDateString();
-  levels.forEach(level=>{
-    const taskKey = `task-${level.id}-${user?.uid}-${today}`;
-    if(taskKey && localStorage.getItem(taskKey)) return; // موجودة
-    if(taskKey) localStorage.removeItem(taskKey);
-  });
-  if(user) renderTasks();
-},1000*60*60); // كل ساعة تحقق من اليوم الجديد
+// إعادة تفعيل المهام يوميًا
+setInterval(()=>{ if(user) renderTasks(); },1000*60*60);
 
 // =======================
-// السحب
+// السحب وهمي
 // =======================
 function withdraw(){
   const amount = parseInt(document.getElementById("withdraw-amount").value);
-  if(amount<1000 || amount>100000){
-    alert("❌ الحد الأدنى للسحب 1000 دج والحد الأعلى 100000 دج");
-    return;
-  }
-  if(amount>balance){
-    alert("❌ رصيدك غير كافي");
-    return;
-  }
-  const userLevel = parseInt(localStorage.getItem("user-level-"+user.uid)) || 0;
-  if(userLevel==0 && balance<2500){
-    alert("❌ لا يمكنك السحب قبل دفع الإيداع للمستوى 1 (2500 دج)");
-    return;
-  }
+  if(amount<1000 || amount>100000){ alert("❌ الحد الأدنى 1000 دج والحد الأعلى 100000 دج"); return; }
+  if(amount>balance){ alert("❌ رصيدك غير كافٍ"); return; }
+  const userLevel = parseInt(localStorage.getItem("level-"+user))||0;
+  if(userLevel==0 && balance<2500){ alert("❌ لا يمكنك السحب قبل دفع الإيداع للمستوى 1 (2500 دج)"); return; }
   balance -= amount;
-  db.collection("users").doc(user.uid).update({balance});
-  updateUI(balance);
+  localStorage.setItem("balance-"+user,balance);
+  updateUI();
   alert(`✅ تم سحب ${amount} دج`);
 }
 
 // =======================
-// رسم بياني للرصيد
+// رسم بياني وهمي للرصيد
 // =======================
 function renderChart(){
   const ctx = document.getElementById("chart").getContext('2d');
-  const labels = balanceHistory.map(b=>b.date);
-  const data = balanceHistory.map(b=>b.balance);
+  const userHistory = JSON.parse(localStorage.getItem("history-"+user)||"[]");
+  userHistory.push({date:new Date().toLocaleDateString(), balance});
+  localStorage.setItem("history-"+user,JSON.stringify(userHistory));
+  const labels = userHistory.map(h=>h.date);
+  const data = userHistory.map(h=>h.balance);
   if(window.myChart) window.myChart.destroy();
   window.myChart = new Chart(ctx,{
     type:'line',
-    data:{
-      labels,
-      datasets:[{
-        label:'الرصيد اليومي',
-        data,
-        borderColor:'#10B981',
-        backgroundColor:'rgba(16,185,129,0.2)',
-        tension:0.3,
-        fill:true
-      }]
-    },
-    options:{
-      responsive:true,
-      plugins:{legend:{display:true,labels:{color:'#F8FAFC'}}},
-      scales:{x:{ticks:{color:'#F8FAFC'}},y:{ticks:{color:'#F8FAFC'}}}
-    }
+    data:{labels,datasets:[{label:'الرصيد اليومي', data, borderColor:'#10B981', backgroundColor:'rgba(16,185,129,0.2)', tension:0.3, fill:true}]},
+    options:{responsive:true, plugins:{legend:{labels:{color:'#F8FAFC'}}}, scales:{x:{ticks:{color:'#F8FAFC'}},y:{ticks:{color:'#F8FAFC'}}}}
   });
 }
 
 // =======================
-// أيقونة التعليمات
+// تعليمات
 // =======================
 function showInstructions(){
   alert(`📌 تعليمات المشترك:
-1. تسجيل حساب جديد أو تسجيل الدخول
-2. شحن الرصيد (USDT أو DZD)
+1. تسجيل الدخول باسم مستخدم
+2. شحن الرصيد (وهمي للتجربة)
+3. اختيار المستوى ودفع الإيداع
+4. إتمام المهام اليومية
+5. السحب بين 1000 و100000 دج
+6. قائمة المهام ومكافآت كل مستوى
+7. الحسابات الفعلية: 
    - USDT: 0xbbf80a21171e0d104e0a81a1563eda6294c987d4
-   - DZD: 00799999001805498745
-3. اختيار المستوى والدفع لتفعيل المهام
-4. إتمام المهام اليومية حسب المستوى
-5. السحب بين 1000 و100,000 دج بعد الإيداع المناسب
-6. قائمة المهام متوفرة داخل المنصة مع مكافآت كل مستوى`);
+   - DZD: 00799999001805498745`);
 }
-
-// =======================
-// تسجيل حساب جديد
-// =======================
-function signup(){
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  auth.createUserWithEmailAndPassword(email,password)
-    .then(cred=>{
-      user=cred.user;
-      db.collection("users").doc(user.uid).set({balance:0});
-      localStorage.setItem("user-level-"+user.uid,0); // مستوى تجريبي
-      updateUI(0);
-      alert("✅ تم إنشاء الحساب بنجاح");
-    })
-    .catch(err=>alert(err.message));
-}
-
-// =======================
-// تسجيل الدخول
-// =======================
-function login(){
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  auth.signInWithEmailAndPassword(email,password)
-    .then(cred=>{
-      user = cred.user;
-      db.collection("users").doc(user.uid).get().then(doc=>{
-        updateUI(doc.data().balance);
-      });
-    })
-    .catch(err=>alert(err.message));
-}
-
-// =======================
-// تسجيل الخروج
-// =======================
-function logout(){
-  auth.signOut().then(()=>{
-    user=null;
-    updateUI(0);
-  });
-}
-
-// متابعة تسجيل الدخول تلقائيًا
-auth.onAuthStateChanged(u=>{
-  if(u){
-    user=u;
-    db.collection("users").doc(user.uid).get().then(doc=>{
-      updateUI(doc.data().balance);
-    });
-  } else {
-    user=null;
-    updateUI(0);
-  }
-});
 </script>
 
 </body>
