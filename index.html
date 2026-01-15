@@ -1,182 +1,51 @@
-
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!DOCTYPE html><html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>منصة الأرباح | Profit Hub</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-  body{margin:0;font-family:'Cairo',sans-serif;background:#0F172A;color:#F8FAFC;}
-  .hidden{display:none;}
-  .btn{padding:0.75rem 1.5rem;border-radius:9999px;font-weight:bold;cursor:pointer;transition:all 0.2s;}
-  .btn-primary{background:#10B981;color:#fff;box-shadow:0 0 20px rgba(16,185,129,0.3);}
-  .btn-secondary{background:#F59E0B;color:#000;box-shadow:0 0 20px rgba(245,158,11,0.3);}
-  .card{background:rgba(30,41,59,0.7);backdrop-filter:blur(12px);border-radius:1.5rem;padding:1.5rem;margin:1rem 0;position:relative;transition:all 0.2s;}
-  .card:hover{box-shadow:0 0 20px rgba(255,255,255,0.1);}
-  select,input{padding:0.5rem 1rem;border-radius:1rem;border:none;background:#1E293B;color:#F8FAFC;margin:0.25rem 0;}
-  .language-switch{position:absolute;top:1rem;left:1rem;}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصة الأرباح - Profit Hub</title>
+  <!-- Google Fonts Cairo -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-<div class="language-switch">
-  <select id="languageSelect">
-    <option value="ar">العربية</option>
-    <option value="fr">Français</option>
-    <option value="en">English</option>
-  </select>
-</div>
-
-<!-- ======= تسجيل الدخول ======= -->
-<div id="login">
-  <h2>تسجيل الدخول / التسجيل</h2>
-  <input id="username" placeholder="اسم المستخدم">
-  <input id="password" type="password" placeholder="كلمة السر">
-  <button class="btn btn-primary" onclick="login()">دخول</button>
-</div>
-
-<!-- ======= التطبيق ======= -->
-<div id="app" class="hidden">
-  <h1 id="welcome"></h1>
-  <button class="btn btn-secondary" onclick="logout()">تسجيل خروج</button>
-
-  <!-- رصيد المستخدم -->
-  <div class="card">
-    <h3>الرصيد</h3>
-    <p id="balance">0 دج</p>
-  </div>
-
-  <!-- المستويات والمهام -->
-  <div id="levels"></div>
-
-  <!-- شحن -->
-  <div class="card">
-    <h3>شحن الرصيد</h3>
-    <select id="method">
-      <option value="USDT">USDT</option>
-      <option value="DZD">DZD</option>
-    </select>
-    <input type="number" id="amount" placeholder="المبلغ">
-    <input type="file" id="depositReceipt">
-    <button class="btn btn-primary" onclick="deposit()">تأكيد الدفع</button>
-  </div>
-
-  <!-- سحب -->
-  <div class="card">
-    <h3>سحب الأرباح</h3>
-    <input type="number" id="withdrawAmount" placeholder="المبلغ (1000 - 100000 دج)">
-    <button class="btn btn-secondary" onclick="withdraw()">طلب السحب</button>
-  </div>
-
-  <!-- تعليمات -->
-  <div class="card">
-    <h3>التعليمات</h3>
-    <p>لشحن الرصيد: اختر طريقة الشحن، أدخل المبلغ وارفع وصل الدفع ثم اضغط على تأكيد الدفع.</p>
-    <p>للسحب: أدخل المبلغ ثم اضغط على طلب السحب.</p>
-    <p>للمزيد من الدعم: <a href="https://chat.whatsapp.com/Cyu9IkkA8INASNJCV871J6" target="_blank">خدمة العملاء</a></p>
-  </div>
-</div>
-
-<script>
-// ======= بيانات المستخدم + مستويات =======
-let user="",userData={};
-const levels=[
-  {name:"تجريبي",deposit:0,daily:50,duration:10},
-  {name:"المستوى 1",deposit:2500,daily:70,duration:360},
-  {name:"المستوى 2",deposit:5200,daily:150,duration:360},
-  {name:"المستوى 3",deposit:20000,daily:500,duration:360},
-  {name:"المستوى 4",deposit:40000,daily:1100,duration:360},
-];
-
-// ======= تسجيل الدخول / الخروج =======
-function login(){
-  const name=document.getElementById("username").value.trim();
-  const pass=document.getElementById("password").value.trim();
-  if(!name || !pass) return alert("أدخل اسم المستخدم وكلمة السر");
-
-  let users=JSON.parse(localStorage.getItem("users")||"{}");
-  if(users[name]){
-    if(users[name].pass!==pass) return alert("كلمة السر خاطئة");
-    user=name; userData=users[name];
-  } else {
-    user=name; userData={balance:0,level:0,lastTask:0,pass:pass};
-    users[name]=userData;
-    localStorage.setItem("users",JSON.stringify(users));
-  }
-  localStorage.setItem("currentUser",user);
-  init();
-}
-
-function logout(){
-  localStorage.removeItem("currentUser");
-  document.getElementById("app").classList.add("hidden");
-  document.getElementById("login").classList.remove("hidden");
-}
-
-// ======= تهيئة التطبيق =======
-function init(){
-  document.getElementById("login").classList.add("hidden");
-  document.getElementById("app").classList.remove("hidden");
-  document.getElementById("welcome").innerText=`مرحباً ${user}`;
-  document.getElementById("balance").innerText=`${userData.balance} دج`;
-
-  renderLevels();
-}
-
-// ======= عرض المستويات =======
-function renderLevels(){
-  const container=document.getElementById("levels");
-  container.innerHTML="";
-  levels.forEach((lvl,i)=>{
-    const card=document.createElement("div");
-    card.className="card";
-    card.innerHTML=`<h3>${lvl.name}</h3>
-      <p>الإيداع: ${lvl.deposit} دج</p>
-      <p>المهمة اليومية: ${lvl.daily} دج</p>
-      <p>مدة المستوى: ${lvl.duration} يوم</p>
-      <button class="btn btn-primary" onclick="activateLevel(${i})">تفعيل المستوى</button>`;
-    container.appendChild(card);
-  });
-}
-
-// ======= تفعيل المستوى (رسالة واتساب للإدارة) =======
-function activateLevel(idx){
-  const lvl=levels[idx];
-  const msg=`⭐ طلب تفعيل مستوى\nالمستخدم: ${user}\nالمستوى: ${lvl.name}`;
-  notifyAdmin(msg);
-  alert("تم فتح WhatsApp لإرسال طلب تفعيل المستوى للإدارة");
-}
-
-// ======= شحن الرصيد =======
-function deposit(){
-  const amount=document.getElementById("amount").value;
-  const method=document.getElementById("method").value;
-  if(!amount) return alert("أدخل المبلغ");
-  const msg=`💰 طلب شحن رصيد\nالمستخدم: ${user}\nطريقة الشحن: ${method}\nالمبلغ: ${amount}`;
-  notifyAdmin(msg);
-  alert("تم فتح WhatsApp لإرسال طلب الشحن للإدارة");
-}
-
-// ======= سحب الأرباح =======
-function withdraw(){
-  const amount=document.getElementById("withdrawAmount").value;
-  if(amount<1000||amount>100000){alert("المبلغ غير صالح");return;}
-  const msg=`💸 طلب سحب أرباح\nالمستخدم: ${user}\nالمبلغ: ${amount} دج`;
-  notifyAdmin(msg);
-  alert("تم فتح WhatsApp لإرسال طلب السحب للإدارة");
-}
-
-// ======= إشعارات واتساب =======
-function notifyAdmin(message){
-  const adminNumber="213660624409"; // رقم WhatsApp Business
-  const url=`https://wa.me/${adminNumber}?text=${encodeURIComponent(message)}`;
-  window.open(url,"_blank");
-}
-
-// ======= اختيار اللغة =======
-document.getElementById("languageSelect").addEventListener("change",e=>{
-  const lang=e.target.value;
-  if(lang==="ar"){document.documentElement.lang="ar";document.body.dir="rtl";}
-  else{document.documentElement.lang=lang;document.body.dir="ltr";}
-});
-</script>
+<body class="bg-gradient-to-br from-emerald-500 to-teal-600 font-Cairo text-white">  <!-- Header -->  <header class="p-4 bg-slate-900/80 backdrop-blur-md flex justify-between items-center">
+    <h1 class="font-bold text-xl">منصة الأرباح</h1>
+    <div>
+      <select id="langSelect" class="rounded-lg px-2 py-1 text-slate-900">
+        <option value="ar">العربية</option>
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+  </header>  <!-- User Info -->  <section class="p-6 glassmorphism my-6 mx-4 rounded-2xl shadow-lg">
+    <div class="flex justify-between items-center">
+      <div>
+        <h2 id="usernameDisplay" class="font-bold text-lg">مرحبًا، المستخدم</h2>
+        <p>رصيدك الحالي: <span id="balanceDisplay">0</span> دج</p>
+      </div>
+      <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-full">تسجيل خروج</button>
+    </div>
+  </section>  <!-- Tasks & Levels -->  <section class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Example Level Card -->
+    <div class="bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-emerald-500/30 transition-colors">
+      <h3 class="font-bold text-lg mb-2">المستوى التجريبي</h3>
+      <p>مهمة يومية مقابل 50 دج</p>
+      <p>صالحة ل10 أيام</p>
+      <button onclick="performTask('demo')" class="mt-4 bg-primary text-white px-4 py-2 rounded-full hover:scale-105 transition-transform">تنفيذ المهمة</button>
+    </div>
+    <!-- Add other levels similarly -->
+  </section>  <!-- Shеll / Deposit -->  <section class="p-6 glassmorphism my-6 mx-4 rounded-2xl shadow-lg">
+    <h3 class="font-bold text-lg mb-2">شحن الرصيد</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <button onclick="showDeposit('USDT')" class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-full">شحن USDT</button>
+      <button onclick="showDeposit('DZD')" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-full">شحن DZD</button>
+    </div>
+  </section>  <!-- Withdraw -->  <section class="p-6 glassmorphism my-6 mx-4 rounded-2xl shadow-lg">
+    <h3 class="font-bold text-lg mb-2">سحب الأرباح</h3>
+    <input type="number" id="withdrawAmount" placeholder="المبلغ" class="bg-slate-950/50 border-slate-700 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 px-4 text-right text-white placeholder:text-slate-500 transition-all w-full">
+    <button onclick="requestWithdraw()" class="mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded-full w-full">تأكيد السحب</button>
+  </section>  <!-- WhatsApp Bot -->  <section class="p-6 text-center">
+    <a href="https://wa.me/213660624409" target="_blank" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-full inline-block">الدعم و الإدارة عبر WhatsApp</a>
+  </section>  <!-- Firebase & JS -->  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>  <script src="js/whatsapp.js"></script>  <script src="js/main.js"></script></body>
+</html>
