@@ -1,259 +1,136 @@
+      
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>منصة الأرباح التجريبية</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منصة الأرباح</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <style>
-body {
-  margin:0; font-family:'Cairo', sans-serif; background:#0F172A; color:#F8FAFC;
-}
-header {
-  background:#1E293B; padding:20px; text-align:center; font-size:24px; font-weight:700;
-  box-shadow:0 4px 10px rgba(0,0,0,0.5);
-}
-.container { padding:20px; display:grid; gap:20px; }
-.card {
-  background: rgba(30,41,59,0.7); backdrop-filter: blur(12px); border-radius:16px; padding:20px;
-  box-shadow:0 0 20px rgba(16,185,129,0.3); transition: transform 0.2s;
-}
-.card:hover { transform: translateY(-5px); }
-.balance { font-size:28px; font-weight:700; color:#10B981; }
-input, button { width:100%; padding:12px; margin-top:10px; border-radius:12px; border:none; font-size:16px;}
-button.primary { background:linear-gradient(to right,#10B981,#06b370); color:#fff; box-shadow:0 0 15px rgba(16,185,129,0.6);}
-button.secondary { background:linear-gradient(to right,#F59E0B,#FBBF24); color:#000; box-shadow:0 0 15px rgba(245,158,11,0.6);}
-button:active { transform:scale(0.95);}
-.hidden { display:none; }
-.task-btn, .level-btn { margin-top:5px; }
-.icon-btn { display:inline-block; margin:5px; padding:8px 12px; background:#1E293B; border-radius:50%; cursor:pointer; box-shadow:0 0 10px #3B82F6; color:#fff; font-size:18px;}
-.gradient-text { background: linear-gradient(to right,#10B981,#06b370); -webkit-background-clip: text; color:transparent;}
+body{margin:0;font-family:Cairo;background:#0f172a;color:#fff}
+header{padding:20px;text-align:center;font-size:24px;font-weight:700;background:#020617}
+.card{background:rgba(255,255,255,.08);backdrop-filter:blur(14px);border-radius:16px;padding:16px;margin:12px;box-shadow:0 0 20px rgba(0,255,200,.2)}
+button,input,select{width:100%;padding:12px;border-radius:12px;border:none;margin-top:8px;font-size:15px}
+button{background:linear-gradient(90deg,#22c55e,#06b6d4);color:#000;font-weight:700}
+.icon{font-size:22px;padding:10px;border-radius:50%;background:#020617;display:inline-block;margin:6px}
+.hidden{display:none}
 </style>
 </head>
+
 <body>
 
-<header>💎 منصة الأرباح التجريبية</header>
+<header>💎 منصة الأرباح</header>
 
-<div class="container">
+<div class="card" id="login">
+  <input id="user" placeholder="اسم المستخدم">
+  <button onclick="login()">دخول</button>
+</div>
 
-  <!-- تسجيل الدخول وهمي -->
-  <div class="card" id="auth-card">
-    <h3>تسجيل الدخول / إنشاء حساب</h3>
-    <input type="text" id="username" placeholder="اسم المستخدم">
-    <button class="primary" onclick="login()">دخول</button>
+<div id="app" class="hidden">
+
+  <div class="card">
+    <div>رصيدك: <b id="bal">0</b> دج</div>
   </div>
 
-  <!-- المنصة -->
-  <div id="platform" class="hidden">
-
-    <div class="card">
-      <div>رصيدك الحالي</div>
-      <div class="balance" id="balance">0 دج</div>
-      <button class="secondary" onclick="logout()">تسجيل الخروج</button>
-    </div>
-
-    <!-- أيقونات التعليمات وخدمة العملاء -->
-    <div class="card">
-      <span class="icon-btn" onclick="showInstructions()">ℹ️</span>
-      <span class="icon-btn" onclick="window.open('https://chat.whatsapp.com/Cyu9IkkA8INASNJCV871J6','_blank')">💬</span>
-    </div>
-
-    <!-- اختيار المستوى -->
-    <div class="card">
-      <div>اختر المستوى أو دفع الإيداع</div>
-      <div id="levels-container"></div>
-    </div>
-
-    <!-- مهام اليوم -->
-    <div class="card">
-      <div>مهام اليوم</div>
-      <div id="tasks-container"></div>
-    </div>
-
-    <!-- السحب -->
-    <div class="card">
-      <div>سحب الرصيد</div>
-      <input type="number" id="withdraw-amount" placeholder="أدخل المبلغ بالدج">
-      <button class="primary" onclick="withdraw()">سحب</button>
-    </div>
-
-    <!-- لوحة تحكم رسوم بيانية -->
-    <div class="card">
-      <canvas id="chart" height="200"></canvas>
-    </div>
-
+  <!-- أيقونات -->
+  <div class="card">
+    <span class="icon" onclick="info()">ℹ️</span>
+    <span class="icon" onclick="openCharge()">💰</span>
+    <span class="icon" onclick="openWithdraw()">💸</span>
+    <span class="icon" onclick="openSupport()">💬</span>
   </div>
 
 </div>
 
+<!-- نافذة الشحن -->
+<div id="charge" class="card hidden">
+  <h3>شحن الرصيد</h3>
+  <select id="method" onchange="selectMethod()">
+    <option value="">اختر طريقة الشحن</option>
+    <option value="usdt">USDT</option>
+    <option value="dzd">DZD</option>
+  </select>
+
+  <div id="payinfo" class="hidden">
+    <div id="account"></div>
+    <input id="amount" type="number" placeholder="المبلغ">
+    <input type="file">
+    <button onclick="confirmPay()">✅ تأكيد الدفع</button>
+  </div>
+</div>
+
+<!-- نافذة السحب -->
+<div id="withdraw" class="card hidden">
+  <h3>سحب الأرباح</h3>
+  <input id="wamount" type="number" placeholder="المبلغ (1000 - 100000)">
+  <button onclick="sendWithdraw()">إرسال طلب السحب</button>
+</div>
+
 <script>
-// =======================
-// بيانات وهمية للتجربة
-// =======================
-let user = null;
-let balance = 0;
-let balanceHistory = [];
+let username="",balance=0;
 
-const levels = [
-  {id:0, name:"تجريبي", deposit:0, daily:50, duration:10},
-  {id:1, name:"المستوى 1", deposit:2500, daily:70, duration:360},
-  {id:2, name:"المستوى 2", deposit:5200, daily:150, duration:360},
-  {id:3, name:"المستوى 3", deposit:20000, daily:500, duration:360},
-  {id:6, name:"المستوى 6", deposit:40000, daily:1100, duration:360},
-];
-
-// =======================
-// تسجيل الدخول وهمي
-// =======================
 function login(){
-  const name = document.getElementById("username").value;
-  if(!name){ alert("أدخل اسم المستخدم"); return; }
-  user = name;
-  if(!localStorage.getItem("balance-"+user)) localStorage.setItem("balance-"+user,0);
-  balance = parseInt(localStorage.getItem("balance-"+user));
-  updateUI();
+  username=document.getElementById("user").value;
+  if(!username)return alert("اكتب اسمك");
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
 }
 
-// =======================
-// تسجيل الخروج
-// =======================
-function logout(){
-  user=null;
-  document.getElementById("platform").classList.add("hidden");
-  document.getElementById("auth-card").classList.remove("hidden");
+function info(){
+  alert(`📌 التعليمات:
+- سجّل باسمك
+- اختر مستوى
+- أنجز المهام اليومية
+- اطلب السحب بعد استيفاء الشروط`);
 }
 
-// =======================
-// تحديث واجهة المستخدم
-// =======================
-function updateUI(){
-  document.getElementById("auth-card").classList.add("hidden");
-  document.getElementById("platform").classList.remove("hidden");
-  document.getElementById("balance").innerText = balance + " دج";
-  renderLevels();
-  renderTasks();
-  renderChart();
+function openSupport(){
+  window.open("https://chat.whatsapp.com/Cyu9IkkA8INASNJCV871J6");
 }
 
-// =======================
-// عرض المستويات
-// =======================
-function renderLevels(){
-  const container = document.getElementById("levels-container");
-  container.innerHTML="";
-  const userLevel = parseInt(localStorage.getItem("level-"+user))||0;
-  levels.forEach(l=>{
-    container.innerHTML += `
-      <div style="margin-bottom:8px;">
-        <span>${l.name} - إيداع: ${l.deposit} دج - مكافأة يومية: ${l.daily} دج</span>
-        <button class="secondary level-btn" onclick="payLevel(${l.id})" ${userLevel>=l.id?"disabled":""}>
-          ${userLevel>=l.id?"تم الدفع":"دفع الإيداع"}
-        </button>
-      </div>
-    `;
-  });
+function openCharge(){
+  hideAll();document.getElementById("charge").classList.remove("hidden");
 }
 
-// =======================
-// دفع الإيداع وهمي
-// =======================
-function payLevel(levelId){
-  const level = levels.find(l=>l.id===levelId);
-  if(balance<level.deposit){ alert(`رصيدك غير كافٍ لدفع الإيداع (${level.deposit} دج)`); return; }
-  balance -= level.deposit;
-  localStorage.setItem("level-"+user, level.id);
-  localStorage.setItem("balance-"+user,balance);
-  updateUI();
-  alert(`✅ تم دفع الإيداع للمستوى ${level.name}`);
+function openWithdraw(){
+  hideAll();document.getElementById("withdraw").classList.remove("hidden");
 }
 
-// =======================
-// المهام اليومية مع مؤقت
-// =======================
-function renderTasks(){
-  const container = document.getElementById("tasks-container");
-  container.innerHTML="";
-  const today = new Date().toDateString();
-  const userLevel = parseInt(localStorage.getItem("level-"+user))||0;
-
-  levels.filter(l=>l.id<=userLevel).forEach(level=>{
-    const taskKey = `task-${level.id}-${user}-${today}`;
-    const done = localStorage.getItem(taskKey);
-    container.innerHTML += `
-      <div style="margin-bottom:10px;">
-        <span>مهمة يومية للمستوى ${level.name} (+${level.daily} دج)</span>
-        <button class="primary task-btn" ${done?"disabled":""} onclick="completeTask(${level.id})">
-          ${done?"تم":"إتمام المهمة"}
-        </button>
-      </div>
-    `;
-  });
+function hideAll(){
+  document.getElementById("charge").classList.add("hidden");
+  document.getElementById("withdraw").classList.add("hidden");
 }
 
-function completeTask(levelId){
-  const level = levels.find(l=>l.id===levelId);
-  const today = new Date().toDateString();
-  const taskKey = `task-${level.id}-${user}-${today}`;
-  if(localStorage.getItem(taskKey)) return;
-  balance += level.daily;
-  localStorage.setItem(taskKey,"done");
-  localStorage.setItem("balance-"+user,balance);
-  updateUI();
-  alert(`✅ تمت إضافة ${level.daily} دج`);
+function selectMethod(){
+  let m=document.getElementById("method").value;
+  let acc=document.getElementById("account");
+  if(!m)return;
+  document.getElementById("payinfo").classList.remove("hidden");
+  if(m==="usdt"){
+    acc.innerHTML="عنوان USDT:<br><b>0xbbf80a21171e0d104e0a81a1563eda6294c987d4</b><br>(10$ - 10000$)";
+  }else{
+    acc.innerHTML="حساب DZD:<br><b>00799999001805498745</b><br>(2000 - 10000 دج)";
+  }
 }
 
-// إعادة تفعيل المهام يوميًا
-setInterval(()=>{ if(user) renderTasks(); },1000*60*60);
-
-// =======================
-// السحب وهمي
-// =======================
-function withdraw(){
-  const amount = parseInt(document.getElementById("withdraw-amount").value);
-  if(amount<1000 || amount>100000){ alert("❌ الحد الأدنى 1000 دج والحد الأعلى 100000 دج"); return; }
-  if(amount>balance){ alert("❌ رصيدك غير كافٍ"); return; }
-  const userLevel = parseInt(localStorage.getItem("level-"+user))||0;
-  if(userLevel==0 && balance<2500){ alert("❌ لا يمكنك السحب قبل دفع الإيداع للمستوى 1 (2500 دج)"); return; }
-  balance -= amount;
-  localStorage.setItem("balance-"+user,balance);
-  updateUI();
-  alert(`✅ تم سحب ${amount} دج`);
+function confirmPay(){
+  let m=document.getElementById("method").value;
+  let a=document.getElementById("amount").value;
+  let msg=`السلام عليكم
+اسم المستخدم: ${username}
+طريقة الشحن: ${m}
+المبلغ: ${a}
+تم رفع وصل الشحن`;
+  window.open("https://wa.me/?text="+encodeURIComponent(msg));
 }
 
-// =======================
-// رسم بياني وهمي للرصيد
-// =======================
-function renderChart(){
-  const ctx = document.getElementById("chart").getContext('2d');
-  const userHistory = JSON.parse(localStorage.getItem("history-"+user)||"[]");
-  userHistory.push({date:new Date().toLocaleDateString(), balance});
-  localStorage.setItem("history-"+user,JSON.stringify(userHistory));
-  const labels = userHistory.map(h=>h.date);
-  const data = userHistory.map(h=>h.balance);
-  if(window.myChart) window.myChart.destroy();
-  window.myChart = new Chart(ctx,{
-    type:'line',
-    data:{labels,datasets:[{label:'الرصيد اليومي', data, borderColor:'#10B981', backgroundColor:'rgba(16,185,129,0.2)', tension:0.3, fill:true}]},
-    options:{responsive:true, plugins:{legend:{labels:{color:'#F8FAFC'}}}, scales:{x:{ticks:{color:'#F8FAFC'}},y:{ticks:{color:'#F8FAFC'}}}}
-  });
-}
-
-// =======================
-// تعليمات
-// =======================
-function showInstructions(){
-  alert(`📌 تعليمات المشترك:
-1. تسجيل الدخول باسم مستخدم
-2. شحن الرصيد (وهمي للتجربة)
-3. اختيار المستوى ودفع الإيداع
-4. إتمام المهام اليومية
-5. السحب بين 1000 و100000 دج
-6. قائمة المهام ومكافآت كل مستوى
-7. الحسابات الفعلية: 
-   - USDT: 0xbbf80a21171e0d104e0a81a1563eda6294c987d4
-   - DZD: 00799999001805498745`);
+function sendWithdraw(){
+  let a=document.getElementById("wamount").value;
+  if(a<1000||a>100000)return alert("مبلغ غير صالح");
+  let msg=`طلب سحب
+المستخدم: ${username}
+المبلغ: ${a}`;
+  window.open("https://wa.me/?text="+encodeURIComponent(msg));
 }
 </script>
 
