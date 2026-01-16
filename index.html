@@ -2,151 +2,180 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>Groupe des 22</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منصة الأرباح | Profit Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  body {
-    background-color: #0B0B0B;
-    color: white;
-    font-family: Cairo, sans-serif;
-    text-align: center;
-    padding: 20px;
-  }
-
-  .title { font-size: 36px; color: #C9A227; margin-bottom: 20px; }
-  .subtitle { font-size: 18px; color: #FFFFFF; margin-bottom: 30px; }
-
-  .btn {
-    display: inline-block;
-    padding: 12px 25px;
-    margin: 5px;
-    border-radius: 12px;
-    font-weight: bold;
-    text-decoration: none;
-    color: white;
-    transition: 0.3s;
-    cursor: pointer;
-  }
-  .btn-green { background-color: #006233; }
-  .btn-green:hover { opacity: 0.8; }
-  .btn-gold { background-color: #C9A227; color: #0B0B0B; }
-  .btn-gold:hover { opacity: 0.8; }
-
-  input {
-    width: 80%; padding: 10px; margin: 10px 0;
-    border-radius: 8px; border: 1px solid #555;
-    background-color: #111; color: white;
-  }
-
-  .section { margin-bottom: 30px; }
-
-  .task-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-  .task { display: flex; justify-content: space-between; background: #111; padding: 10px; border-radius: 8px; }
-
-  .hidden { display: none; }
-
+  body{margin:0;font-family:'Cairo',sans-serif;background:#0F172A;color:#F8FAFC;}
+  .hidden{display:none;}
+  .btn{padding:0.75rem 1.5rem;border-radius:9999px;font-weight:bold;cursor:pointer;transition:all 0.2s;}
+  .btn-primary{background:#10B981;color:#fff;box-shadow:0 0 20px rgba(16,185,129,0.3);}
+  .btn-secondary{background:#F59E0B;color:#000;box-shadow:0 0 20px rgba(245,158,11,0.3);}
+  .card{background:rgba(30,41,59,0.7);backdrop-filter:blur(12px);border-radius:1.5rem;padding:1.5rem;margin:1rem 0;position:relative;transition:all 0.2s;}
+  .card:hover{box-shadow:0 0 20px rgba(255,255,255,0.1);}
+  select,input{padding:0.5rem 1rem;border-radius:1rem;border:none;background:#1E293B;color:#F8FAFC;margin:0.25rem 0;}
+  .language-switch{position:absolute;top:1rem;left:1rem;}
 </style>
 </head>
 <body>
+<div class="language-switch">
+  <select id="languageSelect">
+    <option value="ar">العربية</option>
+    <option value="fr">Français</option>
+    <option value="en">English</option>
+  </select>
+</div>
 
-<main id="landing">
-  <h1 class="title">Groupe des 22</h1>
-  <p class="subtitle">منصة رقمية جزائرية لإدارة المهام والمكافآت</p>
-  <div>
-    <button class="btn btn-green" onclick="showLogin()">تسجيل الدخول</button>
-    <button class="btn btn-gold" onclick="showDashboard()">لوحة التحكم</button>
-  </div>
-</main>
+<!-- ======= تسجيل الدخول ======= -->
+<div id="login">
+  <h2>تسجيل الدخول / التسجيل</h2>
+  <input id="username" placeholder="اسم المستخدم">
+  <input id="password" type="password" placeholder="كلمة السر">
+  <button class="btn btn-primary" onclick="login()">دخول</button>
+</div>
 
-<main id="login" class="hidden">
-  <h1 class="title">تسجيل الدخول</h1>
-  <input type="email" id="email" placeholder="البريد الإلكتروني"><br>
-  <input type="password" id="password" placeholder="كلمة المرور"><br>
-  <button class="btn btn-green" onclick="login()">دخول</button>
-  <button class="btn btn-gold" onclick="showLanding()">عودة</button>
-</main>
+<!-- ======= التطبيق ======= -->
+<div id="app" class="hidden">
+  <h1 id="welcome"></h1>
+  <button class="btn btn-secondary" onclick="logout()">تسجيل خروج</button>
 
-<main id="dashboard" class="hidden">
-  <h1 class="title">لوحة التحكم</h1>
-  
-  <section class="section">
-    <h2>رصيدك الحالي</h2>
+  <!-- رصيد المستخدم -->
+  <div class="card">
+    <h3>الرصيد</h3>
     <p id="balance">0 دج</p>
-  </section>
+  </div>
 
-  <section class="section">
-    <h2>المهام اليومية</h2>
-    <div class="task-list">
-      <div class="task"><span>مهمة المستوى التجريبي - 50 دج</span><button onclick="completeTask(0)">تنفيذ</button></div>
-      <div class="task"><span>مهمة المستوى الأول - 70 دج</span><button onclick="completeTask(1)">تنفيذ</button></div>
-      <div class="task"><span>مهمة المستوى الثاني - 150 دج</span><button onclick="completeTask(2)">تنفيذ</button></div>
-    </div>
-  </section>
+  <!-- المستويات والمهام -->
+  <div id="levels"></div>
 
-  <section class="section">
-    <h2>الشحن والسحب</h2>
-    <button class="btn btn-green" onclick="showRecharge()">شحن الرصيد</button>
-    <button class="btn btn-gold" onclick="showWithdraw()">سحب الأرباح</button>
-  </section>
+  <!-- شحن -->
+  <div class="card">
+    <h3>شحن الرصيد</h3>
+    <select id="method">
+      <option value="USDT">USDT</option>
+      <option value="DZD">DZD</option>
+    </select>
+    <input type="number" id="amount" placeholder="المبلغ">
+    <input type="file" id="depositReceipt">
+    <button class="btn btn-primary" onclick="deposit()">تأكيد الدفع</button>
+  </div>
 
-  <button class="btn btn-gold" onclick="showLanding()">تسجيل الخروج</button>
-</main>
+  <!-- سحب -->
+  <div class="card">
+    <h3>سحب الأرباح</h3>
+    <input type="number" id="withdrawAmount" placeholder="المبلغ (1000 - 100000 دج)">
+    <button class="btn btn-secondary" onclick="withdraw()">طلب السحب</button>
+  </div>
 
-<main id="recharge" class="hidden">
-  <h1 class="title">شحن الرصيد (تجربة)</h1>
-  <p>واجهة شحن مؤقتة</p>
-  <button class="btn btn-gold" onclick="showDashboard()">عودة للوحة التحكم</button>
-</main>
-
-<main id="withdraw" class="hidden">
-  <h1 class="title">سحب الأرباح (تجربة)</h1>
-  <p>واجهة سحب مؤقتة</p>
-  <button class="btn btn-gold" onclick="showDashboard()">عودة للوحة التحكم</button>
-</main>
+  <!-- تعليمات -->
+  <div class="card">
+    <h3>التعليمات</h3>
+    <p>لشحن الرصيد: اختر طريقة الشحن، أدخل المبلغ وارفع وصل الدفع ثم اضغط على تأكيد الدفع.</p>
+    <p>للسحب: أدخل المبلغ ثم اضغط على طلب السحب.</p>
+    <p>للمزيد من الدعم: <a href="https://chat.whatsapp.com/Cyu9IkkA8INASNJCV871J6" target="_blank">خدمة العملاء</a></p>
+  </div>
+</div>
 
 <script>
-  let balance = 0;
+// ======= بيانات المستخدم + مستويات =======
+let user="",userData={};
+const levels=[
+  {name:"تجريبي",deposit:0,daily:50,duration:10},
+  {name:"المستوى 1",deposit:2500,daily:70,duration:360},
+  {name:"المستوى 2",deposit:5200,daily:150,duration:360},
+  {name:"المستوى 3",deposit:20000,daily:500,duration:360},
+  {name:"المستوى 4",deposit:40000,daily:1100,duration:360},
+];
 
-  function showLanding() {
-    document.getElementById("landing").classList.remove("hidden");
-    document.getElementById("login").classList.add("hidden");
-    document.getElementById("dashboard").classList.add("hidden");
-    document.getElementById("recharge").classList.add("hidden");
-    document.getElementById("withdraw").classList.add("hidden");
-  }
+// ======= تسجيل الدخول / الخروج =======
+function login(){
+  const name=document.getElementById("username").value.trim();
+  const pass=document.getElementById("password").value.trim();
+  if(!name || !pass) return alert("أدخل اسم المستخدم وكلمة السر");
 
-  function showLogin() {
-    document.getElementById("landing").classList.add("hidden");
-    document.getElementById("login").classList.remove("hidden");
+  let users=JSON.parse(localStorage.getItem("users")||"{}");
+  if(users[name]){
+    if(users[name].pass!==pass) return alert("كلمة السر خاطئة");
+    user=name; userData=users[name];
+  } else {
+    user=name; userData={balance:0,level:0,lastTask:0,pass:pass};
+    users[name]=userData;
+    localStorage.setItem("users",JSON.stringify(users));
   }
+  localStorage.setItem("currentUser",user);
+  init();
+}
 
-  function showDashboard() {
-    document.getElementById("landing").classList.add("hidden");
-    document.getElementById("login").classList.add("hidden");
-    document.getElementById("dashboard").classList.remove("hidden");
-  }
+function logout(){
+  localStorage.removeItem("currentUser");
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("login").classList.remove("hidden");
+}
 
-  function showRecharge() {
-    document.getElementById("dashboard").classList.add("hidden");
-    document.getElementById("recharge").classList.remove("hidden");
-  }
+// ======= تهيئة التطبيق =======
+function init(){
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  document.getElementById("welcome").innerText=`مرحباً ${user}`;
+  document.getElementById("balance").innerText=`${userData.balance} دج`;
 
-  function showWithdraw() {
-    document.getElementById("dashboard").classList.add("hidden");
-    document.getElementById("withdraw").classList.remove("hidden");
-  }
+  renderLevels();
+}
 
-  function login() {
-    alert("تم تسجيل الدخول بنجاح (مؤقت)");
-    showDashboard();
-  }
+// ======= عرض المستويات =======
+function renderLevels(){
+  const container=document.getElementById("levels");
+  container.innerHTML="";
+  levels.forEach((lvl,i)=>{
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`<h3>${lvl.name}</h3>
+      <p>الإيداع: ${lvl.deposit} دج</p>
+      <p>المهمة اليومية: ${lvl.daily} دج</p>
+      <p>مدة المستوى: ${lvl.duration} يوم</p>
+      <button class="btn btn-primary" onclick="activateLevel(${i})">تفعيل المستوى</button>`;
+    container.appendChild(card);
+  });
+}
 
-  function completeTask(level) {
-    const rewards = [50, 70, 150];
-    balance += rewards[level];
-    document.getElementById("balance").innerText = balance + " دج";
-    alert(`تم اكمال المهمة! رصيدك الآن: ${balance} دج`);
-  }
+// ======= تفعيل المستوى (رسالة واتساب للإدارة) =======
+function activateLevel(idx){
+  const lvl=levels[idx];
+  const msg=`⭐ طلب تفعيل مستوى\nالمستخدم: ${user}\nالمستوى: ${lvl.name}`;
+  notifyAdmin(msg);
+  alert("تم فتح WhatsApp لإرسال طلب تفعيل المستوى للإدارة");
+}
+
+// ======= شحن الرصيد =======
+function deposit(){
+  const amount=document.getElementById("amount").value;
+  const method=document.getElementById("method").value;
+  if(!amount) return alert("أدخل المبلغ");
+  const msg=`💰 طلب شحن رصيد\nالمستخدم: ${user}\nطريقة الشحن: ${method}\nالمبلغ: ${amount}`;
+  notifyAdmin(msg);
+  alert("تم فتح WhatsApp لإرسال طلب الشحن للإدارة");
+}
+
+// ======= سحب الأرباح =======
+function withdraw(){
+  const amount=document.getElementById("withdrawAmount").value;
+  if(amount<1000||amount>100000){alert("المبلغ غير صالح");return;}
+  const msg=`💸 طلب سحب أرباح\nالمستخدم: ${user}\nالمبلغ: ${amount} دج`;
+  notifyAdmin(msg);
+  alert("تم فتح WhatsApp لإرسال طلب السحب للإدارة");
+}
+
+// ======= إشعارات واتساب =======
+function notifyAdmin(message){
+  const adminNumber="213660624409"; // رقم WhatsApp Business
+  const url=`https://wa.me/${adminNumber}?text=${encodeURIComponent(message)}`;
+  window.open(url,"_blank");
+}
+
+// ======= اختيار اللغة =======
+document.getElementById("languageSelect").addEventListener("change",e=>{
+  const lang=e.target.value;
+  if(lang==="ar"){document.documentElement.lang="ar";document.body.dir="rtl";}
+  else{document.documentElement.lang=lang;document.body.dir="ltr";}
+});
 </script>
-
-</body>
-</html>
