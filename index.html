@@ -1,51 +1,152 @@
-<!DOCTYPE html><html lang="ar" dir="rtl">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>منصة الأرباح - Profit Hub</title>
-  <!-- Google Fonts Cairo -->
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <!-- Tailwind CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<title>Groupe des 22</title>
+<style>
+  body {
+    background-color: #0B0B0B;
+    color: white;
+    font-family: Cairo, sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .title { font-size: 36px; color: #C9A227; margin-bottom: 20px; }
+  .subtitle { font-size: 18px; color: #FFFFFF; margin-bottom: 30px; }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 25px;
+    margin: 5px;
+    border-radius: 12px;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+    transition: 0.3s;
+    cursor: pointer;
+  }
+  .btn-green { background-color: #006233; }
+  .btn-green:hover { opacity: 0.8; }
+  .btn-gold { background-color: #C9A227; color: #0B0B0B; }
+  .btn-gold:hover { opacity: 0.8; }
+
+  input {
+    width: 80%; padding: 10px; margin: 10px 0;
+    border-radius: 8px; border: 1px solid #555;
+    background-color: #111; color: white;
+  }
+
+  .section { margin-bottom: 30px; }
+
+  .task-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+  .task { display: flex; justify-content: space-between; background: #111; padding: 10px; border-radius: 8px; }
+
+  .hidden { display: none; }
+
+</style>
 </head>
-<body class="bg-gradient-to-br from-emerald-500 to-teal-600 font-Cairo text-white">  <!-- Header -->  <header class="p-4 bg-slate-900/80 backdrop-blur-md flex justify-between items-center">
-    <h1 class="font-bold text-xl">منصة الأرباح</h1>
-    <div>
-      <select id="langSelect" class="rounded-lg px-2 py-1 text-slate-900">
-        <option value="ar">العربية</option>
-        <option value="fr">Français</option>
-        <option value="en">English</option>
-      </select>
+<body>
+
+<main id="landing">
+  <h1 class="title">Groupe des 22</h1>
+  <p class="subtitle">منصة رقمية جزائرية لإدارة المهام والمكافآت</p>
+  <div>
+    <button class="btn btn-green" onclick="showLogin()">تسجيل الدخول</button>
+    <button class="btn btn-gold" onclick="showDashboard()">لوحة التحكم</button>
+  </div>
+</main>
+
+<main id="login" class="hidden">
+  <h1 class="title">تسجيل الدخول</h1>
+  <input type="email" id="email" placeholder="البريد الإلكتروني"><br>
+  <input type="password" id="password" placeholder="كلمة المرور"><br>
+  <button class="btn btn-green" onclick="login()">دخول</button>
+  <button class="btn btn-gold" onclick="showLanding()">عودة</button>
+</main>
+
+<main id="dashboard" class="hidden">
+  <h1 class="title">لوحة التحكم</h1>
+  
+  <section class="section">
+    <h2>رصيدك الحالي</h2>
+    <p id="balance">0 دج</p>
+  </section>
+
+  <section class="section">
+    <h2>المهام اليومية</h2>
+    <div class="task-list">
+      <div class="task"><span>مهمة المستوى التجريبي - 50 دج</span><button onclick="completeTask(0)">تنفيذ</button></div>
+      <div class="task"><span>مهمة المستوى الأول - 70 دج</span><button onclick="completeTask(1)">تنفيذ</button></div>
+      <div class="task"><span>مهمة المستوى الثاني - 150 دج</span><button onclick="completeTask(2)">تنفيذ</button></div>
     </div>
-  </header>  <!-- User Info -->  <section class="p-6 glassmorphism my-6 mx-4 rounded-2xl shadow-lg">
-    <div class="flex justify-between items-center">
-      <div>
-        <h2 id="usernameDisplay" class="font-bold text-lg">مرحبًا، المستخدم</h2>
-        <p>رصيدك الحالي: <span id="balanceDisplay">0</span> دج</p>
-      </div>
-      <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-full">تسجيل خروج</button>
-    </div>
-  </section>  <!-- Tasks & Levels -->  <section class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-    <!-- Example Level Card -->
-    <div class="bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:border-emerald-500/30 transition-colors">
-      <h3 class="font-bold text-lg mb-2">المستوى التجريبي</h3>
-      <p>مهمة يومية مقابل 50 دج</p>
-      <p>صالحة ل10 أيام</p>
-      <button onclick="performTask('demo')" class="mt-4 bg-primary text-white px-4 py-2 rounded-full hover:scale-105 transition-transform">تنفيذ المهمة</button>
-    </div>
-    <!-- Add other levels similarly -->
-  </section>  <!-- Shеll / Deposit -->  <section class="p-6 glassmorphism my-6 mx-4 rounded-2xl shadow-lg">
-    <h3 class="font-bold text-lg mb-2">شحن الرصيد</h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <button onclick="showDeposit('USDT')" class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-full">شحن USDT</button>
-      <button onclick="showDeposit('DZD')" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-full">شحن DZD</button>
-    </div>
-  </section>  <!-- Withdraw -->  <section class="p-6 glassmorphism my-6 mx-4 rounded-2xl shadow-lg">
-    <h3 class="font-bold text-lg mb-2">سحب الأرباح</h3>
-    <input type="number" id="withdrawAmount" placeholder="المبلغ" class="bg-slate-950/50 border-slate-700 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl h-12 px-4 text-right text-white placeholder:text-slate-500 transition-all w-full">
-    <button onclick="requestWithdraw()" class="mt-4 bg-red-500 hover:bg-red-600 px-4 py-2 rounded-full w-full">تأكيد السحب</button>
-  </section>  <!-- WhatsApp Bot -->  <section class="p-6 text-center">
-    <a href="https://wa.me/213660624409" target="_blank" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-full inline-block">الدعم و الإدارة عبر WhatsApp</a>
-  </section>  <!-- Firebase & JS -->  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>  <script src="js/whatsapp.js"></script>  <script src="js/main.js"></script></body>
+  </section>
+
+  <section class="section">
+    <h2>الشحن والسحب</h2>
+    <button class="btn btn-green" onclick="showRecharge()">شحن الرصيد</button>
+    <button class="btn btn-gold" onclick="showWithdraw()">سحب الأرباح</button>
+  </section>
+
+  <button class="btn btn-gold" onclick="showLanding()">تسجيل الخروج</button>
+</main>
+
+<main id="recharge" class="hidden">
+  <h1 class="title">شحن الرصيد (تجربة)</h1>
+  <p>واجهة شحن مؤقتة</p>
+  <button class="btn btn-gold" onclick="showDashboard()">عودة للوحة التحكم</button>
+</main>
+
+<main id="withdraw" class="hidden">
+  <h1 class="title">سحب الأرباح (تجربة)</h1>
+  <p>واجهة سحب مؤقتة</p>
+  <button class="btn btn-gold" onclick="showDashboard()">عودة للوحة التحكم</button>
+</main>
+
+<script>
+  let balance = 0;
+
+  function showLanding() {
+    document.getElementById("landing").classList.remove("hidden");
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("recharge").classList.add("hidden");
+    document.getElementById("withdraw").classList.add("hidden");
+  }
+
+  function showLogin() {
+    document.getElementById("landing").classList.add("hidden");
+    document.getElementById("login").classList.remove("hidden");
+  }
+
+  function showDashboard() {
+    document.getElementById("landing").classList.add("hidden");
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+  }
+
+  function showRecharge() {
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("recharge").classList.remove("hidden");
+  }
+
+  function showWithdraw() {
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("withdraw").classList.remove("hidden");
+  }
+
+  function login() {
+    alert("تم تسجيل الدخول بنجاح (مؤقت)");
+    showDashboard();
+  }
+
+  function completeTask(level) {
+    const rewards = [50, 70, 150];
+    balance += rewards[level];
+    document.getElementById("balance").innerText = balance + " دج";
+    alert(`تم اكمال المهمة! رصيدك الآن: ${balance} دج`);
+  }
+</script>
+
+</body>
 </html>
