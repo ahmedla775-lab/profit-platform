@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box}
 body{
   margin:0;
   font-family:'Cairo',sans-serif;
@@ -21,7 +20,6 @@ body{
   padding:1rem;
 }
 .hidden{display:none}
-h1,h2,h3{margin:0.5rem 0}
 .card{
   background:#1E293B;
   border-radius:16px;
@@ -38,11 +36,11 @@ h1,h2,h3{margin:0.5rem 0}
 }
 .primary{background:#10B981;color:#fff}
 .secondary{background:#F59E0B;color:#000}
-.disabled{opacity:0.5;pointer-events:none}
+.disabled{opacity:.5;pointer-events:none}
 input,select{
   width:100%;
-  padding:0.6rem;
-  margin:0.4rem 0;
+  padding:.6rem;
+  margin:.4rem 0;
   border-radius:12px;
   border:none;
   background:#334155;
@@ -50,165 +48,136 @@ input,select{
 }
 .balance-box{
   display:flex;
-  justify-content:space-between;
-  gap:0.5rem;
+  gap:.5rem;
 }
 .balance{
   flex:1;
   background:#020617;
-  padding:0.7rem;
+  padding:.7rem;
   border-radius:12px;
   text-align:center;
 }
-.lang{
-  text-align:left;
-  margin-bottom:0.5rem;
-}
-small{color:#94A3B8}
 </style>
 </head>
 
 <body>
 <div class="app">
 
-<div class="lang">
-<select id="lang">
+<select id="langSelect">
   <option value="ar">العربية</option>
   <option value="fr">Français</option>
   <option value="en">English</option>
 </select>
-</div>
 
 <!-- LOGIN -->
 <div id="login">
-<h2 data-t="login">تسجيل الدخول</h2>
+<h2 data-i18n="login">تسجيل الدخول</h2>
 <input id="u" placeholder="اسم المستخدم">
 <input id="p" type="password" placeholder="كلمة السر">
-<button class="btn primary" onclick="login()">دخول</button>
+<button class="btn primary" onclick="login()" data-i18n="enter">دخول</button>
 </div>
 
 <!-- APP -->
 <div id="panel" class="hidden">
 
-<h2 id="welcome"></h2>
+<h3 id="welcome"></h3>
 
 <div class="balance-box">
 <div class="balance">DZD<br><b id="dzd">0</b></div>
 <div class="balance">USDT<br><b id="usdt">0</b></div>
 </div>
 
-<!-- LEVELS -->
-<div id="levels"></div>
-
-<!-- DEPOSIT -->
+<!-- LEVEL -->
 <div class="card">
-<h3 data-t="deposit">شحن الرصيد</h3>
-
-<select id="currency" onchange="updateDeposit()">
-<option value="">اختر العملة</option>
-<option value="DZD">DZD</option>
-<option value="USDT">USDT</option>
-</select>
-
-<small id="accountInfo"></small>
-
-<input id="amount" type="number" placeholder="المبلغ">
-<input id="receipt" type="file">
-
-<button class="btn primary" onclick="deposit()">تأكيد الدفع</button>
+<h3 data-i18n="level">مستواك</h3>
+<p id="levelName">تجريبي</p>
 </div>
 
-<!-- WITHDRAW -->
+<!-- TASK -->
 <div class="card">
-<h3 data-t="withdraw">سحب الأرباح</h3>
-<input id="wAmount" type="number" placeholder="المبلغ">
-<button class="btn secondary" id="wBtn" onclick="withdraw()">طلب سحب</button>
+<h3 data-i18n="task">المهمة اليومية</h3>
+<p id="taskStatus">—</p>
+<button id="taskBtn" class="btn primary" onclick="doTask()">تنفيذ المهمة</button>
 </div>
 
-<button class="btn secondary" onclick="logout()">خروج</button>
+<button class="btn secondary" onclick="logout()" data-i18n="logout">خروج</button>
 
 </div>
 </div>
 
 <script>
-const admin="213660624409";
+// ====== LANG ======
+const t={
+ar:{
+login:"تسجيل الدخول",enter:"دخول",logout:"خروج",
+task:"المهمة اليومية",done:"تم إنجاز مهمة اليوم",
+level:"مستواك",taskBtn:"تنفيذ المهمة"
+},
+fr:{
+login:"Connexion",enter:"Entrer",logout:"Déconnexion",
+task:"Tâche quotidienne",done:"Tâche déjà effectuée",
+level:"Votre niveau",taskBtn:"Exécuter"
+},
+en:{
+login:"Login",enter:"Enter",logout:"Logout",
+task:"Daily Task",done:"Task completed",
+level:"Your Level",taskBtn:"Execute"
+}
+};
+
+langSelect.onchange=()=>applyLang(langSelect.value);
+
+function applyLang(l){
+  document.documentElement.lang=l;
+  document.documentElement.dir=l==="ar"?"rtl":"ltr";
+  document.querySelectorAll("[data-i18n]").forEach(e=>{
+    e.innerText=t[l][e.dataset.i18n];
+  });
+}
+
+// ====== USER ======
 let user,data,users=JSON.parse(localStorage.users||"{}");
 
-const levels=[
-{name:"تجريبي",dep:0},
-{name:"1",dep:2500},
-{name:"2",dep:5200},
-{name:"3",dep:20000},
-{name:"4",dep:40000},
-];
-
 function login(){
-  const u=document.getElementById("u").value.trim();
+  const u=document.getElementById("u").value;
   const p=document.getElementById("p").value;
-  if(!u||!p) return alert("أدخل البيانات");
-  if(!users[u]) users[u]={p,dzd:0,usdt:0,pending:false};
+  if(!users[u]) users[u]={p,dzd:0,usdt:0,level:"تجريبي",lastTask:0};
   if(users[u].p!==p) return alert("خطأ");
   user=u; data=users[u];
-  localStorage.users=JSON.stringify(users);
-  document.getElementById("login").classList.add("hidden");
-  document.getElementById("panel").classList.remove("hidden");
-  document.getElementById("welcome").innerText="مرحباً "+u;
+  panel.classList.remove("hidden");
+  login.classList.add("hidden");
+  welcome.innerText="مرحباً "+u;
   refresh();
 }
 
 function refresh(){
   dzd.innerText=data.dzd;
   usdt.innerText=data.usdt;
-  renderLevels();
-  wBtn.classList.toggle("disabled",data.dzd<1000);
+  levelName.innerText=data.level;
+  checkTask();
 }
 
-function renderLevels(){
-  levelsBox.innerHTML="";
-  levels.forEach(l=>{
-    const c=document.createElement("div");
-    c.className="card";
-    c.innerHTML=`
-    <b>المستوى ${l.name}</b>
-    <p>إيداع: ${l.dep}</p>
-    ${data.pending?"⏳ قيد المراجعة":
-    `<button class="btn primary" onclick="requestLevel('${l.name}')">تفعيل</button>`}
-    `;
-    levelsBox.appendChild(c);
-  });
-}
-
-function requestLevel(l){
-  data.pending=true;
-  send(`طلب تفعيل مستوى\n${user}\n${l}`);
+function doTask(){
+  const now=Date.now();
+  if(now-data.lastTask<86400000){
+    taskStatus.innerText=t[langSelect.value].done;
+    taskBtn.classList.add("disabled");
+    return;
+  }
+  data.lastTask=now;
+  data.dzd+=50;
   save();
   refresh();
 }
 
-function updateDeposit(){
-  const c=currency.value;
-  if(c==="DZD"){
-    accountInfo.innerText="CCP: 123456";
-    amount.min=2000; amount.max=10000;
+function checkTask(){
+  if(Date.now()-data.lastTask<86400000){
+    taskStatus.innerText=t[langSelect.value].done;
+    taskBtn.classList.add("disabled");
+  }else{
+    taskStatus.innerText="—";
+    taskBtn.classList.remove("disabled");
   }
-  if(c==="USDT"){
-    accountInfo.innerText="TRC20: Txxxx";
-    amount.min=10; amount.max=10000;
-  }
-}
-
-function deposit(){
-  if(!receipt.files.length) return alert("ارفع الوصل");
-  send(`شحن\n${user}\n${currency.value}\n${amount.value}`);
-}
-
-function withdraw(){
-  if(!confirm("تأكيد السحب؟"))return;
-  send(`سحب\n${user}\n${wAmount.value}`);
-}
-
-function send(m){
-  window.open(`https://wa.me/${admin}?text=${encodeURIComponent(m)}`);
 }
 
 function save(){
@@ -216,9 +185,9 @@ function save(){
   localStorage.users=JSON.stringify(users);
 }
 
-function logout(){
-  location.reload();
-}
+function logout(){location.reload()}
+
+applyLang("ar");
 </script>
 </body>
 </html>
