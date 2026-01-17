@@ -2,202 +2,205 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Groupe des 22</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <style>
+*{box-sizing:border-box}
 body{
   margin:0;
   font-family:'Cairo',sans-serif;
-  background:#0F172A;
-  color:#F8FAFC;
-}
-.app{
-  max-width:420px;
-  margin:auto;
-  padding:1rem;
-}
-.hidden{display:none}
-
-.card{
-  background:rgba(30,41,59,.9);
-  border-radius:18px;
-  padding:1rem;
-  margin-bottom:1rem;
-  box-shadow:0 0 15px rgba(0,0,0,.3);
+  background:#f3f6f4;
+  color:#0f172a;
 }
 
-h2,h3{margin:.2rem 0}
-
-.btn{
-  width:100%;
-  padding:.8rem;
+/* ===== Header ===== */
+.header{
+  background:linear-gradient(135deg,#0f7a3a,#138d4a);
+  color:#fff;
+  padding:16px;
+  border-bottom-left-radius:22px;
+  border-bottom-right-radius:22px;
+}
+.header-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.logo{
+  font-weight:800;
+  font-size:18px;
+}
+.lang{
+  background:#ffffff22;
   border:none;
-  border-radius:999px;
+  color:#fff;
+  padding:6px 10px;
+  border-radius:12px;
+}
+.notice{
+  margin-top:12px;
+  background:#ffffff33;
+  padding:10px;
+  border-radius:14px;
+  font-size:14px;
+}
+
+/* ===== Quick Buttons ===== */
+.quick{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin:16px;
+}
+.quick button{
+  border:none;
+  padding:14px;
+  border-radius:18px;
   font-weight:700;
+  font-size:15px;
   cursor:pointer;
 }
-.primary{
-  background:#10B981;
+.recharge{background:#e9f7ef;color:#0f7a3a}
+.program{background:#fff3cd;color:#b8860b}
+
+/* ===== Grid Menu ===== */
+.menu{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin:0 16px;
+}
+.menu div{
+  background:#0f7a3a;
   color:#fff;
-}
-.secondary{
-  background:#F59E0B;
-  color:#000;
-}
-
-input,select{
-  width:100%;
-  padding:.6rem;
-  border-radius:12px;
-  border:none;
-  background:#334155;
-  color:#fff;
-  margin:.3rem 0;
-}
-
-.level{
-  border:1px solid rgba(255,255,255,.1);
-  padding:.7rem;
-  border-radius:14px;
-  margin-top:.5rem;
-}
-
-.balance-box{
+  padding:16px;
+  border-radius:18px;
   display:flex;
-  gap:.5rem;
+  justify-content:space-between;
+  align-items:center;
+  font-weight:600;
 }
-.balance{
+
+/* ===== Tasks ===== */
+.section-title{
+  margin:20px 16px 8px;
+  font-weight:800;
+}
+.task{
+  background:#fff;
+  margin:12px 16px;
+  padding:14px;
+  border-radius:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 6px 16px rgba(0,0,0,0.06);
+}
+.task img{
+  width:52px;
+}
+.task .info{
   flex:1;
-  background:#020617;
-  padding:.7rem;
-  border-radius:12px;
-  text-align:center;
+  margin:0 12px;
 }
-.small{font-size:.85rem;color:#94A3B8}
-.disabled{opacity:.5;pointer-events:none}
+.task .reward{
+  color:#16a34a;
+  font-weight:800;
+}
+.task button{
+  background:#0f7a3a;
+  color:#fff;
+  border:none;
+  padding:8px 14px;
+  border-radius:14px;
+}
+
+/* ===== Bottom Nav ===== */
+.bottom{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:#fff;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+  border-top:1px solid #ddd;
+}
+.bottom div{
+  text-align:center;
+  font-size:12px;
+  color:#555;
+}
+.bottom i{
+  font-size:18px;
+  display:block;
+}
+.spacer{height:80px}
 </style>
 </head>
 
 <body>
-<div class="app">
 
-<!-- LOGIN -->
-<div id="login">
-  <h2>تسجيل الدخول</h2>
-  <input id="u" placeholder="اسم المستخدم">
-  <input id="p" type="password" placeholder="كلمة السر">
-  <button class="btn primary" onclick="login()">دخول</button>
+<div class="header">
+  <div class="header-top">
+    <div class="logo">Groupe des 22</div>
+    <select class="lang">
+      <option>عربي</option>
+      <option>FR</option>
+      <option>EN</option>
+    </select>
+  </div>
+  <div class="notice">
+    هنا لن تخوض تجربة عادية، بل مسار مهني منظم 💼
+  </div>
 </div>
 
-<!-- PANEL -->
-<div id="panel" class="hidden">
-
-<h3 id="welcome"></h3>
-
-<div class="balance-box">
-  <div class="balance">DZD<br><b id="dzd">0</b></div>
-  <div class="balance">USDT<br><b id="usdt">0</b></div>
+<div class="quick">
+  <button class="recharge"><i class="fa-solid fa-coins"></i> تعبئة رصيد</button>
+  <button class="program"><i class="fa-solid fa-gift"></i> البرنامج</button>
 </div>
 
-<!-- LEVELS -->
-<div class="card">
-<h3>المستويات</h3>
-<div id="levels"></div>
+<div class="menu">
+  <div>ملف الشركة <i class="fa-solid fa-building"></i></div>
+  <div>دعوة الأصدقاء <i class="fa-solid fa-user-plus"></i></div>
+  <div>السحب <i class="fa-solid fa-wallet"></i></div>
+  <div>فريق العمل <i class="fa-solid fa-users"></i></div>
 </div>
 
-<!-- TASK -->
-<div class="card">
-<h3>المهمة اليومية</h3>
-<p id="taskText">—</p>
-<button id="taskBtn" class="btn primary" onclick="doTask()">تنفيذ المهمة</button>
+<div class="section-title">الأنشطة</div>
+
+<div class="task">
+  <img src="https://cdn-icons-png.flaticon.com/512/2721/2721297.png">
+  <div class="info">
+    <div>دعوة 5 أصدقاء</div>
+    <small>مكافأة فورية</small>
+  </div>
+  <div class="reward">+500 دج</div>
+  <button>عرض</button>
 </div>
 
-<button class="btn secondary" onclick="logout()">تسجيل خروج</button>
-
+<div class="task">
+  <img src="https://cdn-icons-png.flaticon.com/512/2721/2721297.png">
+  <div class="info">
+    <div>مهمة يومية</div>
+    <small>متاحة اليوم</small>
+  </div>
+  <div class="reward">+150 دج</div>
+  <button>ابدأ</button>
 </div>
+
+<div class="spacer"></div>
+
+<div class="bottom">
+  <div><i class="fa-solid fa-house"></i>الرئيسية</div>
+  <div><i class="fa-solid fa-list-check"></i>المهام</div>
+  <div><i class="fa-solid fa-users"></i>الفريق</div>
+  <div><i class="fa-solid fa-user"></i>حسابي</div>
 </div>
 
-<script>
-const levels=[
- {name:"تجريبي",deposit:0,reward:50},
- {name:"المستوى 1",deposit:2500,reward:70},
- {name:"المستوى 2",deposit:5200,reward:150},
- {name:"المستوى 3",deposit:20000,reward:500},
- {name:"المستوى 4",deposit:40000,reward:1100},
-];
-
-let users=JSON.parse(localStorage.users||"{}");
-let user,data;
-
-function login(){
-  const u=document.getElementById("u").value;
-  const p=document.getElementById("p").value;
-  if(!users[u]) users[u]={p,dzd:0,usdt:0,level:0,lastTask:0};
-  if(users[u].p!==p) return alert("كلمة السر خاطئة");
-  user=u; data=users[u];
-  loginDiv.style.display="none";
-  panel.classList.remove("hidden");
-  welcome.innerText="مرحباً "+u;
-  render();
-}
-
-const loginDiv=document.getElementById("login");
-
-function render(){
-  dzd.innerText=data.dzd;
-  usdt.innerText=data.usdt;
-  renderLevels();
-  checkTask();
-  save();
-}
-
-function renderLevels(){
-  const box=document.getElementById("levels");
-  box.innerHTML="";
-  levels.forEach((l,i)=>{
-    const div=document.createElement("div");
-    div.className="level";
-    div.innerHTML=`
-      <b>${l.name}</b>
-      <div class="small">الإيداع: ${l.deposit} دج</div>
-      <div class="small">المهمة اليومية: ${l.reward} دج</div>
-      ${i===data.level
-        ?"<div class='small'>✅ مفعل</div>"
-        :"<button class='btn primary' onclick='requestLevel("+i+")'>طلب تفعيل</button>"
-      }
-    `;
-    box.appendChild(div);
-  });
-}
-
-function requestLevel(i){
-  const msg=`طلب تفعيل مستوى\nالمستخدم: ${user}\nالمستوى: ${levels[i].name}`;
-  window.open("https://wa.me/213660624409?text="+encodeURIComponent(msg));
-}
-
-function doTask(){
-  const now=Date.now();
-  if(now-data.lastTask<86400000) return;
-  data.lastTask=now;
-  data.dzd+=levels[data.level].reward;
-  render();
-}
-
-function checkTask(){
-  if(Date.now()-data.lastTask<86400000){
-    taskText.innerText="تم إنجاز مهمة اليوم";
-    taskBtn.classList.add("disabled");
-  }else{
-    taskText.innerText="مكافأة: "+levels[data.level].reward+" دج";
-    taskBtn.classList.remove("disabled");
-  }
-}
-
-function save(){localStorage.users=JSON.stringify(users)}
-function logout(){location.reload()}
-</script>
 </body>
 </html>
