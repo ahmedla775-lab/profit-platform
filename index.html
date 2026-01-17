@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Profit Hub</title>
+<title>Groupe des 22</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
 body{
@@ -20,32 +20,51 @@ body{
   padding:1rem;
 }
 .hidden{display:none}
+
 .card{
-  background:#1E293B;
-  border-radius:16px;
+  background:rgba(30,41,59,.9);
+  border-radius:18px;
   padding:1rem;
   margin-bottom:1rem;
+  box-shadow:0 0 15px rgba(0,0,0,.3);
 }
+
+h2,h3{margin:.2rem 0}
+
 .btn{
   width:100%;
-  padding:0.8rem;
+  padding:.8rem;
   border:none;
   border-radius:999px;
-  font-weight:bold;
+  font-weight:700;
   cursor:pointer;
 }
-.primary{background:#10B981;color:#fff}
-.secondary{background:#F59E0B;color:#000}
-.disabled{opacity:.5;pointer-events:none}
+.primary{
+  background:#10B981;
+  color:#fff;
+}
+.secondary{
+  background:#F59E0B;
+  color:#000;
+}
+
 input,select{
   width:100%;
   padding:.6rem;
-  margin:.4rem 0;
   border-radius:12px;
   border:none;
   background:#334155;
   color:#fff;
+  margin:.3rem 0;
 }
+
+.level{
+  border:1px solid rgba(255,255,255,.1);
+  padding:.7rem;
+  border-radius:14px;
+  margin-top:.5rem;
+}
+
 .balance-box{
   display:flex;
   gap:.5rem;
@@ -57,137 +76,128 @@ input,select{
   border-radius:12px;
   text-align:center;
 }
+.small{font-size:.85rem;color:#94A3B8}
+.disabled{opacity:.5;pointer-events:none}
 </style>
 </head>
 
 <body>
 <div class="app">
 
-<select id="langSelect">
-  <option value="ar">العربية</option>
-  <option value="fr">Français</option>
-  <option value="en">English</option>
-</select>
-
 <!-- LOGIN -->
 <div id="login">
-<h2 data-i18n="login">تسجيل الدخول</h2>
-<input id="u" placeholder="اسم المستخدم">
-<input id="p" type="password" placeholder="كلمة السر">
-<button class="btn primary" onclick="login()" data-i18n="enter">دخول</button>
+  <h2>تسجيل الدخول</h2>
+  <input id="u" placeholder="اسم المستخدم">
+  <input id="p" type="password" placeholder="كلمة السر">
+  <button class="btn primary" onclick="login()">دخول</button>
 </div>
 
-<!-- APP -->
+<!-- PANEL -->
 <div id="panel" class="hidden">
 
 <h3 id="welcome"></h3>
 
 <div class="balance-box">
-<div class="balance">DZD<br><b id="dzd">0</b></div>
-<div class="balance">USDT<br><b id="usdt">0</b></div>
+  <div class="balance">DZD<br><b id="dzd">0</b></div>
+  <div class="balance">USDT<br><b id="usdt">0</b></div>
 </div>
 
-<!-- LEVEL -->
+<!-- LEVELS -->
 <div class="card">
-<h3 data-i18n="level">مستواك</h3>
-<p id="levelName">تجريبي</p>
+<h3>المستويات</h3>
+<div id="levels"></div>
 </div>
 
 <!-- TASK -->
 <div class="card">
-<h3 data-i18n="task">المهمة اليومية</h3>
-<p id="taskStatus">—</p>
+<h3>المهمة اليومية</h3>
+<p id="taskText">—</p>
 <button id="taskBtn" class="btn primary" onclick="doTask()">تنفيذ المهمة</button>
 </div>
 
-<button class="btn secondary" onclick="logout()" data-i18n="logout">خروج</button>
+<button class="btn secondary" onclick="logout()">تسجيل خروج</button>
 
 </div>
 </div>
 
 <script>
-// ====== LANG ======
-const t={
-ar:{
-login:"تسجيل الدخول",enter:"دخول",logout:"خروج",
-task:"المهمة اليومية",done:"تم إنجاز مهمة اليوم",
-level:"مستواك",taskBtn:"تنفيذ المهمة"
-},
-fr:{
-login:"Connexion",enter:"Entrer",logout:"Déconnexion",
-task:"Tâche quotidienne",done:"Tâche déjà effectuée",
-level:"Votre niveau",taskBtn:"Exécuter"
-},
-en:{
-login:"Login",enter:"Enter",logout:"Logout",
-task:"Daily Task",done:"Task completed",
-level:"Your Level",taskBtn:"Execute"
-}
-};
+const levels=[
+ {name:"تجريبي",deposit:0,reward:50},
+ {name:"المستوى 1",deposit:2500,reward:70},
+ {name:"المستوى 2",deposit:5200,reward:150},
+ {name:"المستوى 3",deposit:20000,reward:500},
+ {name:"المستوى 4",deposit:40000,reward:1100},
+];
 
-langSelect.onchange=()=>applyLang(langSelect.value);
-
-function applyLang(l){
-  document.documentElement.lang=l;
-  document.documentElement.dir=l==="ar"?"rtl":"ltr";
-  document.querySelectorAll("[data-i18n]").forEach(e=>{
-    e.innerText=t[l][e.dataset.i18n];
-  });
-}
-
-// ====== USER ======
-let user,data,users=JSON.parse(localStorage.users||"{}");
+let users=JSON.parse(localStorage.users||"{}");
+let user,data;
 
 function login(){
   const u=document.getElementById("u").value;
   const p=document.getElementById("p").value;
-  if(!users[u]) users[u]={p,dzd:0,usdt:0,level:"تجريبي",lastTask:0};
-  if(users[u].p!==p) return alert("خطأ");
+  if(!users[u]) users[u]={p,dzd:0,usdt:0,level:0,lastTask:0};
+  if(users[u].p!==p) return alert("كلمة السر خاطئة");
   user=u; data=users[u];
+  loginDiv.style.display="none";
   panel.classList.remove("hidden");
-  login.classList.add("hidden");
   welcome.innerText="مرحباً "+u;
-  refresh();
+  render();
 }
 
-function refresh(){
+const loginDiv=document.getElementById("login");
+
+function render(){
   dzd.innerText=data.dzd;
   usdt.innerText=data.usdt;
-  levelName.innerText=data.level;
+  renderLevels();
   checkTask();
+  save();
+}
+
+function renderLevels(){
+  const box=document.getElementById("levels");
+  box.innerHTML="";
+  levels.forEach((l,i)=>{
+    const div=document.createElement("div");
+    div.className="level";
+    div.innerHTML=`
+      <b>${l.name}</b>
+      <div class="small">الإيداع: ${l.deposit} دج</div>
+      <div class="small">المهمة اليومية: ${l.reward} دج</div>
+      ${i===data.level
+        ?"<div class='small'>✅ مفعل</div>"
+        :"<button class='btn primary' onclick='requestLevel("+i+")'>طلب تفعيل</button>"
+      }
+    `;
+    box.appendChild(div);
+  });
+}
+
+function requestLevel(i){
+  const msg=`طلب تفعيل مستوى\nالمستخدم: ${user}\nالمستوى: ${levels[i].name}`;
+  window.open("https://wa.me/213660624409?text="+encodeURIComponent(msg));
 }
 
 function doTask(){
   const now=Date.now();
-  if(now-data.lastTask<86400000){
-    taskStatus.innerText=t[langSelect.value].done;
-    taskBtn.classList.add("disabled");
-    return;
-  }
+  if(now-data.lastTask<86400000) return;
   data.lastTask=now;
-  data.dzd+=50;
-  save();
-  refresh();
+  data.dzd+=levels[data.level].reward;
+  render();
 }
 
 function checkTask(){
   if(Date.now()-data.lastTask<86400000){
-    taskStatus.innerText=t[langSelect.value].done;
+    taskText.innerText="تم إنجاز مهمة اليوم";
     taskBtn.classList.add("disabled");
   }else{
-    taskStatus.innerText="—";
+    taskText.innerText="مكافأة: "+levels[data.level].reward+" دج";
     taskBtn.classList.remove("disabled");
   }
 }
 
-function save(){
-  users[user]=data;
-  localStorage.users=JSON.stringify(users);
-}
-
+function save(){localStorage.users=JSON.stringify(users)}
 function logout(){location.reload()}
-
-applyLang("ar");
 </script>
 </body>
 </html>
