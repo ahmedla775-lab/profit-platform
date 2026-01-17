@@ -4,176 +4,163 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Groupe des 22</title>
-
-<!-- أيقونات -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-  background: #0f172a;
-  color: #fff;
-}
-
-header {
-  padding: 15px;
-  background: #020617;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.lang button {
-  background: none;
-  border: 1px solid #38bdf8;
-  color: #38bdf8;
-  margin: 0 3px;
-  padding: 5px 10px;
-  border-radius: 6px;
-}
-
-.container {
-  padding: 20px;
-}
-
-.card {
-  background: #020617;
-  border-radius: 14px;
-  padding: 15px;
-  margin-bottom: 15px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2,1fr);
-  gap: 15px;
-}
-
-.icon-box {
-  background: #020617;
-  border-radius: 14px;
-  padding: 20px;
-  text-align: center;
-}
-
-.icon-box i {
-  font-size: 26px;
-  color: #38bdf8;
-  margin-bottom: 10px;
-}
-
-button.main {
-  width: 100%;
-  padding: 12px;
-  background: #38bdf8;
-  color: #020617;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-}
+body{margin:0;font-family:system-ui;background:#0f172a;color:#fff;font-size:18px}
+.hidden{display:none}
+header{padding:18px;background:#020617;display:flex;justify-content:space-between;align-items:center}
+button{cursor:pointer}
+.lang button{border:1px solid #38bdf8;background:none;color:#38bdf8;padding:6px 10px;border-radius:8px}
+.container{padding:20px}
+.card{background:#020617;border-radius:18px;padding:20px;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.icon{background:#020617;border-radius:18px;padding:25px 10px;text-align:center}
+.icon i{font-size:34px;color:#38bdf8;margin-bottom:10px}
+.main{width:100%;padding:15px;border:none;border-radius:14px;font-size:18px;font-weight:bold;background:#38bdf8;color:#020617}
+.back{margin-bottom:10px;background:none;border:none;color:#38bdf8;font-size:16px}
+input{width:100%;padding:12px;border-radius:10px;border:none;margin:10px 0}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h3>Groupe des 22</h3>
-  <div class="lang">
-    <button onclick="setLang('ar')">AR</button>
-    <button onclick="setLang('fr')">FR</button>
-    <button onclick="setLang('en')">EN</button>
-  </div>
+<h3>Groupe des 22</h3>
+<div class="lang">
+<button onclick="setLang('ar')">AR</button>
+<button onclick="setLang('fr')">FR</button>
+<button onclick="setLang('en')">EN</button>
+</div>
 </header>
 
-<div class="container">
+<!-- ====== HOME ====== -->
+<div class="container" id="home">
+<div class="card">
+<h2 id="welcome"></h2>
+<p id="desc"></p>
+</div>
 
-  <div class="card">
-    <h2 id="welcome"></h2>
-    <p id="desc"></p>
-  </div>
+<div class="card">
+<h3 id="balanceTitle"></h3>
+<h1 id="balance">0 DA</h1>
+<button class="main" onclick="openPage('withdraw')">طلب سحب</button>
+</div>
 
-  <div class="card">
-    <h3 id="balanceTitle"></h3>
-    <h1>1200 DA</h1>
-    <button class="main" id="withdraw"></button>
-  </div>
+<div class="grid">
+<div class="icon" onclick="openPage('tasks')"><i class="fa fa-list-check"></i><p id="tasksTxt"></p></div>
+<div class="icon" onclick="openPage('profile')"><i class="fa fa-user"></i><p id="profileTxt"></p></div>
+<div class="icon" onclick="openPage('levels')"><i class="fa fa-layer-group"></i><p id="levelsTxt"></p></div>
+<div class="icon" onclick="openPage('about')"><i class="fa fa-circle-info"></i><p id="aboutTxt"></p></div>
+</div>
+</div>
 
-  <div class="grid">
-    <div class="icon-box">
-      <i class="fa-solid fa-list-check"></i>
-      <p id="tasks"></p>
-    </div>
-    <div class="icon-box">
-      <i class="fa-solid fa-user"></i>
-      <p id="profile"></p>
-    </div>
-    <div class="icon-box">
-      <i class="fa-solid fa-circle-info"></i>
-      <p id="about"></p>
-    </div>
-    <div class="icon-box">
-      <i class="fa-solid fa-headset"></i>
-      <p id="support"></p>
-    </div>
-  </div>
+<!-- ====== TASKS ====== -->
+<div class="container hidden" id="tasks">
+<button class="back" onclick="goHome()">← رجوع</button>
+<div class="card">
+<h3>المهمة اليومية</h3>
+<p>اضغط لتنفيذ المهمة</p>
+<button class="main" onclick="doTask()">تنفيذ المهمة (+100 DA)</button>
+</div>
+</div>
 
+<!-- ====== LEVELS ====== -->
+<div class="container hidden" id="levels">
+<button class="back" onclick="goHome()">← رجوع</button>
+<div id="levelsBox"></div>
+</div>
+
+<!-- ====== PROFILE ====== -->
+<div class="container hidden" id="profile">
+<button class="back" onclick="goHome()">← رجوع</button>
+<div class="card">
+<h3>ملفي الشخصي</h3>
+<p>المستوى: <span id="myLevel">0</span></p>
+</div>
+</div>
+
+<!-- ====== ABOUT ====== -->
+<div class="container hidden" id="about">
+<button class="back" onclick="goHome()">← رجوع</button>
+<div class="card">
+<h3>حول المنصة</h3>
+<p>منصة مهام رقمية جزائرية.</p>
+</div>
+</div>
+
+<!-- ====== ADMIN ====== -->
+<div class="container hidden" id="admin">
+<h3>لوحة التحكم</h3>
+<input id="adminBalance" type="number" placeholder="تعديل الرصيد">
+<button class="main" onclick="setBalance()">حفظ</button>
 </div>
 
 <script>
-const translations = {
-  ar: {
-    welcome: "مرحبًا بك",
-    desc: "منصة المهام الرقمية",
-    balance: "الرصيد",
-    withdraw: "طلب سحب",
-    tasks: "المهام اليومية",
-    profile: "ملفي الشخصي",
-    about: "حول المنصة",
-    support: "الدعم"
-  },
-  fr: {
-    welcome: "Bienvenue",
-    desc: "Plateforme de tâches numériques",
-    balance: "Solde",
-    withdraw: "Demande de retrait",
-    tasks: "Tâches quotidiennes",
-    profile: "Mon profil",
-    about: "À propos",
-    support: "Support"
-  },
-  en: {
-    welcome: "Welcome",
-    desc: "Digital tasks platform",
-    balance: "Balance",
-    withdraw: "Withdraw request",
-    tasks: "Daily tasks",
-    profile: "My profile",
-    about: "About platform",
-    support: "Support"
-  }
-};
+/* ===== DATA ===== */
+let balance=Number(localStorage.getItem("bal")||0);
+let lastTask=localStorage.getItem("task")||"";
+let level=localStorage.getItem("lvl")||0;
+const ADMIN_CODE="2222";
 
-function setLang(lang) {
-  localStorage.setItem("lang", lang);
-  applyLang(lang);
+const levels=[
+{n:"1",c:1000,d:50},{n:"2",c:3000,d:120},
+{n:"3",c:7000,d:300},{n:"4",c:15000,d:700},
+{n:"5",c:30000,d:1500},{n:"6",c:60000,d:3000},
+{n:"7",c:100000,d:6000}
+];
+
+/* ===== NAV ===== */
+function openPage(id){
+document.querySelectorAll(".container").forEach(c=>c.classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
+}
+function goHome(){openPage("home")}
+
+/* ===== TASK ===== */
+function doTask(){
+const today=new Date().toDateString();
+if(today===lastTask){alert("تم تنفيذ المهمة اليوم");return;}
+balance+=100;
+lastTask=today;
+save();
+update();
 }
 
-function applyLang(lang) {
-  document.documentElement.lang = lang;
-  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-
-  document.getElementById("welcome").innerText = translations[lang].welcome;
-  document.getElementById("desc").innerText = translations[lang].desc;
-  document.getElementById("balanceTitle").innerText = translations[lang].balance;
-  document.getElementById("withdraw").innerText = translations[lang].withdraw;
-  document.getElementById("tasks").innerText = translations[lang].tasks;
-  document.getElementById("profile").innerText = translations[lang].profile;
-  document.getElementById("about").innerText = translations[lang].about;
-  document.getElementById("support").innerText = translations[lang].support;
+/* ===== LEVELS ===== */
+function loadLevels(){
+levelsBox.innerHTML="";
+levels.forEach(l=>{
+levelsBox.innerHTML+=`
+<div class="card">
+<h3>المستوى ${l.n}</h3>
+<p>التكلفة: ${l.c} DA</p>
+<p>الربح اليومي: ${l.d} DA</p>
+<button class="main" onclick="alert('راسل الإدارة للتفعيل')">طلب تفعيل</button>
+</div>`;
+});
 }
 
-applyLang(localStorage.getItem("lang") || "ar");
+/* ===== ADMIN ===== */
+function admin(){
+const c=prompt("كود الإدارة");
+if(c===ADMIN_CODE)openPage("admin");
+}
+function setBalance(){
+balance=Number(adminBalance.value);
+save();update();alert("تم التحديث");
+}
+
+/* ===== SAVE ===== */
+function save(){
+localStorage.setItem("bal",balance);
+localStorage.setItem("task",lastTask);
+}
+function update(){
+balance.innerText=balance+" DA";
+myLevel.innerText=level;
+}
+loadLevels();update();
 </script>
 
 </body>
