@@ -7,7 +7,20 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 body{margin:0;font-family:system-ui;background:#0f172a;color:#fff;font-size:18px}
-.hidden{display:none}header{padding:16px;background:#020617;display:flex;justify-content:space-between;align-items:center}.container{padding:20px}.card{background:#020617;border-radius:18px;padding:20px;margin-bottom:18px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.icon{background:#020617;border-radius:18px;padding:25px;text-align:center;cursor:pointer}.icon i{font-size:34px;color:#FFD700;margin-bottom:10px}.icon p{font-size:16px}.main{width:100%;padding:15px;border:none;border-radius:14px;font-size:18px;font-weight:bold;background:#FFD700;color:#020617;cursor:pointer}input,select{width:100%;padding:12px;border-radius:10px;border:none;margin:8px 0}.back{background:none;border:none;color:#FFD700;margin-bottom:10px;font-size:16px;cursor:pointer}.lang button{background:none;border:1px solid #FFD700;color:#FFD700;margin:0 3px;padding:5px 10px;border-radius:6px;cursor:pointer}h3{font-size:22px;text-align:center}p{line-height:1.6}
+.hidden{display:none}
+header{padding:16px;background:#020617;display:flex;justify-content:space-between;align-items:center}
+.container{padding:20px}
+.card{background:#020617;border-radius:18px;padding:20px;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.icon{background:#020617;border-radius:18px;padding:25px;text-align:center;cursor:pointer}
+.icon i{font-size:34px;color:#FFD700;margin-bottom:10px}
+.icon p{font-size:16px}
+.main{width:100%;padding:15px;border:none;border-radius:14px;font-size:18px;font-weight:bold;background:#FFD700;color:#020617;cursor:pointer}
+input,select{width:100%;padding:12px;border-radius:10px;border:none;margin:8px 0}
+.back{background:none;border:none;color:#FFD700;margin-bottom:10px;font-size:16px;cursor:pointer}
+.lang button{background:none;border:1px solid #FFD700;color:#FFD700;margin:0 3px;padding:5px 10px;border-radius:6px;cursor:pointer}
+h3{font-size:22px;text-align:center}
+p{line-height:1.6}
 </style>
 </head>
 <body>
@@ -50,7 +63,7 @@ body{margin:0;font-family:system-ui;background:#0f172a;color:#fff;font-size:18px
 
 <!-- TASKS -->
 <div class="container hidden" id="tasks">
-<button class="back" data-back="home"></button>
+<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> رجوع</button>
 <div class="card">
 <h3 id="taskTitle"></h3>
 <p id="taskInfo"></p>
@@ -60,13 +73,13 @@ body{margin:0;font-family:system-ui;background:#0f172a;color:#fff;font-size:18px
 
 <!-- LEVELS -->
 <div class="container hidden" id="levels">
-<button class="back" data-back="home"></button>
+<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> رجوع</button>
 <div id="levelList"></div>
 </div>
 
 <!-- ABOUT -->
 <div class="container hidden" id="about">
-<button class="back" data-back="home"></button>
+<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> رجوع</button>
 <div class="card">
 <p id="aboutContent"></p>
 </div>
@@ -74,7 +87,7 @@ body{margin:0;font-family:system-ui;background:#0f172a;color:#fff;font-size:18px
 
 <!-- CONTACT -->
 <div class="container hidden" id="contact">
-<button class="back" data-back="home"></button>
+<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> رجوع</button>
 <div class="card">
 <p id="contactInfo"></p>
 </div>
