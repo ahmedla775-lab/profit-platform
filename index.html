@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -7,7 +6,7 @@
 <title>Groupe des 22</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-/* خلفية ذهبية لامعة ونص أبيض */
+/* الخلفية الذهبية اللامعة */
 body {
     margin: 0;
     font-family: system-ui;
@@ -52,7 +51,6 @@ header {
     padding: 25px;
     text-align: center;
     cursor: pointer;
-    transition: 0.3s;
 }
 .icon i {
     font-size: 34px;
@@ -62,9 +60,6 @@ header {
 .icon p {
     font-size: 16px;
     color: #fff;
-}
-.icon:hover {
-    background: rgba(0,0,0,0.5);
 }
 
 /* الأزرار الرئيسية */
@@ -78,9 +73,7 @@ header {
     background: #111; /* أسود */
     color: #fff;
     cursor: pointer;
-    transition: 0.3s;
 }
-.main:hover { background: #333; }
 
 /* المدخلات */
 input, select {
@@ -149,12 +142,12 @@ p { line-height: 1.6; color: #fff; }
 <div class="icon" data-page="levels"><i class="fa fa-layer-group"></i><p id="levelsText"></p></div>
 <div class="icon" data-page="about"><i class="fa fa-circle-info"></i><p id="aboutText"></p></div>
 <div class="icon" data-page="contact"><i class="fa fa-envelope"></i><p id="contactText"></p></div>
+<!-- أيقونة الملف الشخصي -->
 <div class="icon" data-page="profile"><i class="fa fa-user"></i><p id="profileText"></p></div>
 <div class="icon" id="logoutIcon"><i class="fa fa-sign-out-alt"></i><p id="logoutText"></p></div>
 </div>
 </div>
 
-<!-- باقي الصفحات كما هي بدون تغيير -->
 <!-- TASKS -->
 <div class="container hidden" id="tasks">
 <button class="back" data-back="home"><i class="fa fa-arrow-left"></i> <span id="backTasks"></span></button>
@@ -198,8 +191,161 @@ p { line-height: 1.6; color: #fff; }
 </div>
 
 <script>
-// كل جافاسكربت كما هو من الكود السابق، بدون تعديل
-// ... (احتفظنا بالكود الأصلي للوظائف)
+// الرقم الإداري
+const ADMIN_WHATS="213660624409";
+
+// الترجمات
+const translations={
+ar:{login:"تسجيل الدخول",loginBtn:"دخول / تسجيل",bal:"رصيدك",lvl:"مستواك",refs:"إحالاتك",
+tasks:"المهام",levels:"المستويات",levelsList:["المستوى التحفيزي","المستوى الأول","المستوى الثاني","المستوى الثالث","المستوى الرابع","المستوى الخامس","المستوى السادس"],
+profile:"ملفي",support:"الدعم",back:"رجوع",taskTitle:"المهمة اليومية",doTask:"تنفيذ المهمة",taskInfo:"مهمة واحدة كل 24 ساعة",
+aboutText:"من نحن",aboutContent:"منصة Groupe 122 منصة جزائرية مائة بالمائة حقيقية تسعى لتصبح أفضل منصة عالمية للترويج والإشهار وخلق فرص عمل حقيقية في ظل التطور الاقتصادي الرقمي في التجارة والتسويق.",
+contactText:"راسلنا",contactInfo:"راسلنا على البريد الإلكتروني التالي: hamadamamado36@gmail.com",
+logoutText:"خروج",profileUser:"User: ",profileLevel:"Level: ",profileRefs:"Referrals: "
+},
+fr:{login:"Connexion",loginBtn:"Entrer / S'inscrire",bal:"Solde",lvl:"Niveau",refs:"Parrainages",
+tasks:"Tâches",levels:"Niveaux",levelsList:["Niveau Motivationnel","Niveau 1","Niveau 2","Niveau 3","Niveau 4","Niveau 5","Niveau 6"],
+profile:"Profil",support:"Support",back:"Retour",taskTitle:"Tâche quotidienne",doTask:"Exécuter",taskInfo:"Une tâche toutes les 24 heures",
+aboutText:"À propos",aboutContent:"La plateforme Groupe 122 est 100% algérienne et vise à devenir la meilleure plateforme mondiale pour la promotion, la publicité et la création d'emplois réels dans le contexte du développement économique numérique.",
+contactText:"Contact",contactInfo:"Contactez-nous à l'adresse e-mail suivante: hamadamamado36@gmail.com",
+logoutText:"Déconnexion",profileUser:"Utilisateur: ",profileLevel:"Niveau: ",profileRefs:"Parrainages: "
+},
+en:{login:"Login",loginBtn:"Login / Register",bal:"Balance",lvl:"Level",refs:"Referrals",
+tasks:"Tasks",levels:"Levels",levelsList:["Motivational Level","Level 1","Level 2","Level 3","Level 4","Level 5","Level 6"],
+profile:"Profile",support:"Support",back:"Back",taskTitle:"Daily Task",doTask:"Execute",taskInfo:"One task every 24 hours",
+aboutText:"About",aboutContent:"Groupe 122 is a 100% Algerian platform aiming to become the best global platform for promotion, advertising and creating real job opportunities in the context of digital economic development.",
+contactText:"Contact",contactInfo:"Contact us at the following email: hamadamamado36@gmail.com",
+logoutText:"Logout",profileUser:"User: ",profileLevel:"Level: ",profileRefs:"Referrals: "
+}
+};
+
+// بيانات المستخدمين
+let users=JSON.parse(localStorage.getItem("users")||"{}");
+let current=null;
+
+// المستويات
+const levels=[{name:"المستوى التحفيزي",daily:50},{name:"المستوى الأول",daily:70},{name:"المستوى الثاني",daily:160},{name:"المستوى الثالث",daily:400},{name:"المستوى الرابع",daily:650},{name:"المستوى الخامس",daily:900},{name:"المستوى السادس",daily:1200}];
+
+// عناصر الصفحة
+const loginDiv=document.getElementById("login");
+const homeDiv=document.getElementById("home");
+const levelList=document.getElementById("levelList");
+const loginBtn=document.getElementById("loginBtn");
+const arBtn=document.getElementById("arBtn");
+const frBtn=document.getElementById("frBtn");
+const enBtn=document.getElementById("enBtn");
+
+// تغيير اللغة
+function setLang(l){localStorage.setItem("lang",l);applyLang(l);}
+function applyLang(l){
+    const t = translations[l];
+    document.documentElement.lang = l;
+    document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
+
+    // تحديث النصوص العامة
+    document.getElementById("loginTitle").innerText = t.login;
+    loginBtn.innerText = t.loginBtn;
+    document.getElementById("balLabel").innerText = t.bal;
+    document.getElementById("lvlLabel").innerText = t.lvl;
+    document.getElementById("refLabel").innerText = t.refs;
+    document.getElementById("taskTitle").innerText = t.taskTitle;
+    document.getElementById("doTaskBtn").innerText = t.doTask;
+    document.getElementById("taskInfo").innerText = t.taskInfo;
+    document.getElementById("aboutContent").innerText = t.aboutContent;
+    document.getElementById("contactInfo").innerText = t.contactInfo;
+
+    // تحديث أيقونات الصفحة الرئيسية
+    const iconMap = {
+        tasksText: t.tasks,
+        levelsText: t.levels,
+        aboutText: t.aboutText,
+        contactText: t.contactText,
+        profileText: t.profile,
+        logoutText: t.logoutText
+    };
+    Object.keys(iconMap).forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.innerText = iconMap[id];
+    });
+
+    // تحديث أزرار الرجوع
+    document.getElementById("backTasks").innerText = t.back;
+    document.getElementById("backLevels").innerText = t.back;
+    document.getElementById("backAbout").innerText = t.back;
+    document.getElementById("backContact").innerText = t.back;
+    document.getElementById("backProfile").innerText = t.back;
+
+    renderLevels();
+
+    // تحديث ملف المستخدم إذا كانت الصفحة مفتوحة
+    if(current && !loginDiv.classList.contains("hidden") === false){
+        openPage("profile");
+    }
+}
+
+// تفعيل اللغة عند تحميل الصفحة
+applyLang(localStorage.getItem("lang")||"ar");
+
+// تسجيل الدخول
+loginBtn.onclick=()=>{
+    let u=document.getElementById("u").value.trim();
+    let p=document.getElementById("p").value;
+    if(!u||!p) return alert("Fill data");
+    if(!users[u]) users[u]={p,bal:0,lvl:0,refs:[],task:""};
+    if(users[u].p!==p) return alert("Wrong password");
+    current=u;
+    localStorage.setItem("users",JSON.stringify(users));
+    loginDiv.classList.add("hidden");
+    homeDiv.classList.remove("hidden");
+    applyLang(localStorage.getItem("lang")||"ar");
+};
+
+// أزرار اللغة
+arBtn.onclick=()=>setLang("ar");
+frBtn.onclick=()=>setLang("fr");
+enBtn.onclick=()=>setLang("en");
+
+// أيقونات الصفحة
+document.querySelectorAll(".icon[data-page]").forEach(el=>{
+    el.onclick=()=>openPage(el.getAttribute("data-page"));
+});
+
+// تسجيل الخروج
+document.getElementById("logoutIcon").onclick=()=>{
+    current=null;
+    homeDiv.classList.add("hidden");
+    loginDiv.classList.remove("hidden");
+    applyLang(localStorage.getItem("lang")||"ar");
+};
+
+// أزرار الرجوع
+document.querySelectorAll(".back").forEach(el=>{
+    el.onclick=()=>openPage(el.getAttribute("data-back"));
+});
+
+// فتح صفحة
+function openPage(id){
+    document.querySelectorAll(".container").forEach(c=>c.classList.add("hidden"));
+    document.getElementById(id).classList.remove("hidden");
+
+    if(id === "profile" && current && users[current]){
+        const u = users[current];
+        const lang = localStorage.getItem("lang") || "ar";
+        document.getElementById("profileUser").innerText = translations[lang].profileUser + current;
+        document.getElementById("profileLevel").innerText = translations[lang].profileLevel + (u.lvl || 0);
+        document.getElementById("profileRefs").innerText = translations[lang].profileRefs + (u.refs.length || 0);
+    }
+}
+
+// عرض المستويات باللغات
+function renderLevels(){
+    const lang = localStorage.getItem("lang") || "ar";
+    levelList.innerHTML="";
+    levels.forEach((l,i)=>{
+        let name = translations[lang].levelsList[i];
+        levelList.innerHTML+=`<div class="card"><h3>${name}</h3><p>ربح المهمة اليومية: ${l.daily} دج</p><p>كل 24 ساعة مهمة واحدة</p></div>`;
+    });
+}
 </script>
 </body>
 </html>
