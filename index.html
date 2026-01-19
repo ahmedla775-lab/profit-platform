@@ -57,6 +57,8 @@ p{line-height:1.6}
 <div class="icon" data-page="levels"><i class="fa fa-layer-group"></i><p id="levelsText"></p></div>
 <div class="icon" data-page="about"><i class="fa fa-circle-info"></i><p id="aboutText"></p></div>
 <div class="icon" data-page="contact"><i class="fa fa-envelope"></i><p id="contactText"></p></div>
+<!-- أيقونة الملف الشخصي -->
+<div class="icon" data-page="profile"><i class="fa fa-user"></i><p id="profileText"></p></div>
 <div class="icon" id="logoutIcon"><i class="fa fa-sign-out-alt"></i><p id="logoutText"></p></div>
 </div>
 </div>
@@ -90,6 +92,16 @@ p{line-height:1.6}
 <button class="back" data-back="home"><i class="fa fa-arrow-left"></i> رجوع</button>
 <div class="card">
 <p id="contactInfo"></p>
+</div>
+</div>
+
+<!-- PROFILE -->
+<div class="container hidden" id="profile">
+<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> رجوع</button>
+<div class="card">
+<p id="profileUser"></p>
+<p id="profileLevel"></p>
+<p id="profileRefs"></p>
 </div>
 </div>
 
@@ -163,6 +175,7 @@ document.getElementById("logoutText").innerText=t.logoutText;
 document.getElementById("taskTitle").innerText=t.taskTitle;
 document.getElementById("doTaskBtn").innerText=t.doTask;
 document.getElementById("taskInfo").innerText=t.taskInfo;
+document.getElementById("profileText").innerText=t.profile;
 
 renderLevels();
 }
@@ -211,6 +224,14 @@ el.onclick=()=>openPage(el.getAttribute("data-back"));
 function openPage(id){
 document.querySelectorAll(".container").forEach(c=>c.classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
+
+if(id === "profile" && current && users[current]){
+    const u = users[current];
+    const lang = localStorage.getItem("lang") || "ar";
+    document.getElementById("profileUser").innerText = translations[lang].profileUser + current;
+    document.getElementById("profileLevel").innerText = translations[lang].profileLevel + (u.lvl || 0);
+    document.getElementById("profileRefs").innerText = translations[lang].profileRefs + (u.refs.length || 0);
+}
 }
 
 // عرض المستويات باللغات
