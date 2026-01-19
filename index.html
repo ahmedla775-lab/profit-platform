@@ -65,7 +65,7 @@ p{line-height:1.6}
 
 <!-- TASKS -->
 <div class="container hidden" id="tasks">
-<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> رجوع</button>
+<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> <span id="backTasks"></span></button>
 <div class="card">
 <h3 id="taskTitle"></h3>
 <p id="taskInfo"></p>
@@ -75,13 +75,13 @@ p{line-height:1.6}
 
 <!-- LEVELS -->
 <div class="container hidden" id="levels">
-<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> رجوع</button>
+<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> <span id="backLevels"></span></button>
 <div id="levelList"></div>
 </div>
 
 <!-- ABOUT -->
 <div class="container hidden" id="about">
-<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> رجوع</button>
+<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> <span id="backAbout"></span></button>
 <div class="card">
 <p id="aboutContent"></p>
 </div>
@@ -89,7 +89,7 @@ p{line-height:1.6}
 
 <!-- CONTACT -->
 <div class="container hidden" id="contact">
-<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> رجوع</button>
+<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> <span id="backContact"></span></button>
 <div class="card">
 <p id="contactInfo"></p>
 </div>
@@ -97,7 +97,7 @@ p{line-height:1.6}
 
 <!-- PROFILE -->
 <div class="container hidden" id="profile">
-<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> رجوع</button>
+<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> <span id="backProfile"></span></button>
 <div class="card">
 <p id="profileUser"></p>
 <p id="profileLevel"></p>
@@ -156,28 +156,49 @@ const enBtn=document.getElementById("enBtn");
 // تغيير اللغة
 function setLang(l){localStorage.setItem("lang",l);applyLang(l);}
 function applyLang(l){
-const t=translations[l];
-document.documentElement.lang=l;
-document.documentElement.dir=l==="ar"?"rtl":"ltr";
+    const t = translations[l];
+    document.documentElement.lang = l;
+    document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
 
-document.getElementById("loginTitle").innerText=t.login;
-loginBtn.innerText=t.loginBtn;
-document.getElementById("balLabel").innerText=t.bal;
-document.getElementById("lvlLabel").innerText=t.lvl;
-document.getElementById("refLabel").innerText=t.refs;
-document.getElementById("tasksText").innerText=t.tasks;
-document.getElementById("levelsText").innerText=t.levels;
-document.getElementById("aboutText").innerText=t.aboutText;
-document.getElementById("aboutContent").innerText=t.aboutContent;
-document.getElementById("contactText").innerText=t.contactText;
-document.getElementById("contactInfo").innerText=t.contactInfo;
-document.getElementById("logoutText").innerText=t.logoutText;
-document.getElementById("taskTitle").innerText=t.taskTitle;
-document.getElementById("doTaskBtn").innerText=t.doTask;
-document.getElementById("taskInfo").innerText=t.taskInfo;
-document.getElementById("profileText").innerText=t.profile;
+    // تحديث النصوص العامة
+    document.getElementById("loginTitle").innerText = t.login;
+    loginBtn.innerText = t.loginBtn;
+    document.getElementById("balLabel").innerText = t.bal;
+    document.getElementById("lvlLabel").innerText = t.lvl;
+    document.getElementById("refLabel").innerText = t.refs;
+    document.getElementById("taskTitle").innerText = t.taskTitle;
+    document.getElementById("doTaskBtn").innerText = t.doTask;
+    document.getElementById("taskInfo").innerText = t.taskInfo;
+    document.getElementById("aboutContent").innerText = t.aboutContent;
+    document.getElementById("contactInfo").innerText = t.contactInfo;
 
-renderLevels();
+    // تحديث أيقونات الصفحة الرئيسية
+    const iconMap = {
+        tasksText: t.tasks,
+        levelsText: t.levels,
+        aboutText: t.aboutText,
+        contactText: t.contactText,
+        profileText: t.profile,
+        logoutText: t.logoutText
+    };
+    Object.keys(iconMap).forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.innerText = iconMap[id];
+    });
+
+    // تحديث أزرار الرجوع
+    document.getElementById("backTasks").innerText = t.back;
+    document.getElementById("backLevels").innerText = t.back;
+    document.getElementById("backAbout").innerText = t.back;
+    document.getElementById("backContact").innerText = t.back;
+    document.getElementById("backProfile").innerText = t.back;
+
+    renderLevels();
+
+    // تحديث ملف المستخدم إذا كانت الصفحة مفتوحة
+    if(current && !loginDiv.classList.contains("hidden") === false){
+        openPage("profile");
+    }
 }
 
 // تفعيل اللغة عند تحميل الصفحة
@@ -185,16 +206,16 @@ applyLang(localStorage.getItem("lang")||"ar");
 
 // تسجيل الدخول
 loginBtn.onclick=()=>{
-let u=document.getElementById("u").value.trim();
-let p=document.getElementById("p").value;
-if(!u||!p) return alert("Fill data");
-if(!users[u]) users[u]={p,bal:0,lvl:0,refs:[],task:""};
-if(users[u].p!==p) return alert("Wrong password");
-current=u;
-localStorage.setItem("users",JSON.stringify(users));
-loginDiv.classList.add("hidden");
-homeDiv.classList.remove("hidden");
-applyLang(localStorage.getItem("lang")||"ar");
+    let u=document.getElementById("u").value.trim();
+    let p=document.getElementById("p").value;
+    if(!u||!p) return alert("Fill data");
+    if(!users[u]) users[u]={p,bal:0,lvl:0,refs:[],task:""};
+    if(users[u].p!==p) return alert("Wrong password");
+    current=u;
+    localStorage.setItem("users",JSON.stringify(users));
+    loginDiv.classList.add("hidden");
+    homeDiv.classList.remove("hidden");
+    applyLang(localStorage.getItem("lang")||"ar");
 };
 
 // أزرار اللغة
@@ -204,44 +225,44 @@ enBtn.onclick=()=>setLang("en");
 
 // أيقونات الصفحة
 document.querySelectorAll(".icon[data-page]").forEach(el=>{
-el.onclick=()=>openPage(el.getAttribute("data-page"));
+    el.onclick=()=>openPage(el.getAttribute("data-page"));
 });
 
 // تسجيل الخروج
 document.getElementById("logoutIcon").onclick=()=>{
-current=null;
-homeDiv.classList.add("hidden");
-loginDiv.classList.remove("hidden");
-applyLang(localStorage.getItem("lang")||"ar");
+    current=null;
+    homeDiv.classList.add("hidden");
+    loginDiv.classList.remove("hidden");
+    applyLang(localStorage.getItem("lang")||"ar");
 };
 
 // أزرار الرجوع
 document.querySelectorAll(".back").forEach(el=>{
-el.onclick=()=>openPage(el.getAttribute("data-back"));
+    el.onclick=()=>openPage(el.getAttribute("data-back"));
 });
 
 // فتح صفحة
 function openPage(id){
-document.querySelectorAll(".container").forEach(c=>c.classList.add("hidden"));
-document.getElementById(id).classList.remove("hidden");
+    document.querySelectorAll(".container").forEach(c=>c.classList.add("hidden"));
+    document.getElementById(id).classList.remove("hidden");
 
-if(id === "profile" && current && users[current]){
-    const u = users[current];
-    const lang = localStorage.getItem("lang") || "ar";
-    document.getElementById("profileUser").innerText = translations[lang].profileUser + current;
-    document.getElementById("profileLevel").innerText = translations[lang].profileLevel + (u.lvl || 0);
-    document.getElementById("profileRefs").innerText = translations[lang].profileRefs + (u.refs.length || 0);
-}
+    if(id === "profile" && current && users[current]){
+        const u = users[current];
+        const lang = localStorage.getItem("lang") || "ar";
+        document.getElementById("profileUser").innerText = translations[lang].profileUser + current;
+        document.getElementById("profileLevel").innerText = translations[lang].profileLevel + (u.lvl || 0);
+        document.getElementById("profileRefs").innerText = translations[lang].profileRefs + (u.refs.length || 0);
+    }
 }
 
 // عرض المستويات باللغات
 function renderLevels(){
-const lang = localStorage.getItem("lang") || "ar";
-levelList.innerHTML="";
-levels.forEach((l,i)=>{
-let name = translations[lang].levelsList[i];
-levelList.innerHTML+=`<div class="card"><h3>${name}</h3><p>ربح المهمة اليومية: ${l.daily} دج</p><p>كل 24 ساعة مهمة واحدة</p></div>`;
-});
+    const lang = localStorage.getItem("lang") || "ar";
+    levelList.innerHTML="";
+    levels.forEach((l,i)=>{
+        let name = translations[lang].levelsList[i];
+        levelList.innerHTML+=`<div class="card"><h3>${name}</h3><p>ربح المهمة اليومية: ${l.daily} دج</p><p>كل 24 ساعة مهمة واحدة</p></div>`;
+    });
 }
 </script>
 </body>
