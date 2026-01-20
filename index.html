@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -6,22 +7,24 @@
 <title>Groupe des 22</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-body{margin:0;font-family:system-ui;background:#0f172a;color:#fff;font-size:18px}
+body{margin:0;font-family:system-ui;background:#020617;color:#fff;font-size:18px}
 .hidden{display:none}
-header{padding:16px;background:#020617;display:flex;justify-content:space-between;align-items:center}
+header{padding:16px;background:#0f0f0f;display:flex;justify-content:space-between;align-items:center}
 .container{padding:20px}
-.card{background:#020617;border-radius:18px;padding:20px;margin-bottom:18px}
+.card{background:#0f0f0f;border-radius:18px;padding:20px;margin-bottom:18px}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
-.icon{background:#020617;border-radius:18px;padding:25px;text-align:center;cursor:pointer}
-.icon i{font-size:34px;color:#A0522D;margin-bottom:10px} /* أيقونات باللون البني الأشعل */
-.icon p{font-size:16px;color:#fff}
+.icon{background:#0f0f0f;border-radius:18px;padding:25px;text-align:center;cursor:pointer}
+.icon i{font-size:34px;color:#A0522D;margin-bottom:10px} /* اللون البني */
+.icon p{font-size:16px}
 .main{width:100%;padding:15px;border:none;border-radius:14px;font-size:18px;font-weight:bold;background:#FFD700;color:#020617;cursor:pointer}
 input,select{width:100%;padding:12px;border-radius:10px;border:none;margin:8px 0}
-.back{background:none;border:none;color:red;margin-bottom:10px;font-size:16px;cursor:pointer} /* سهم الرجوع باللون الأحمر */
-.lang button{background:none;border:1px solid #FFD700;color:#FFD700;margin:0 3px;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:18px}
+.back{background:none;border:none;color:#FF0000;margin-bottom:10px;font-size:16px;cursor:pointer} /* السهم الأحمر */
+.lang button{background:none;border:1px solid #FFD700;color:#FFD700;margin:0 3px;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:16px}
+.lang button span{margin-left:5px}
 h3{font-size:22px;text-align:center}
 p{line-height:1.6}
-.subCard{background:#1a1a1a;border-radius:12px;padding:15px;margin:10px 0} /* للبطاقات الفرعية داخل الإيداع والسحب */
+.withdraw-btn, .deposit-btn{background:#A0522D;color:#fff;border:none;padding:10px 15px;margin:5px;border-radius:8px;cursor:pointer}
+.transaction{background:#1f1f1f;border-radius:12px;padding:10px;margin-bottom:10px;font-size:16px}
 </style>
 </head>
 <body>
@@ -29,9 +32,9 @@ p{line-height:1.6}
 <header>
 <h3>Groupe des 22</h3>
 <div class="lang">
-<button id="arBtn">🇩🇿</button>
-<button id="frBtn">🇫🇷</button>
-<button id="enBtn">🇺🇸</button>
+<button id="arBtn"><span>🇩🇿</span>AR</button>
+<button id="frBtn"><span>🇫🇷</span>FR</button>
+<button id="enBtn"><span>🇺🇸</span>EN</button>
 </div>
 </header>
 
@@ -59,9 +62,9 @@ p{line-height:1.6}
 <div class="icon" data-page="about"><i class="fa fa-circle-info"></i><p id="aboutText"></p></div>
 <div class="icon" data-page="contact"><i class="fa fa-envelope"></i><p id="contactText"></p></div>
 <div class="icon" data-page="profile"><i class="fa fa-user"></i><p id="profileText"></p></div>
-<div class="icon" id="withdrawIcon"><i class="fa fa-hand-holding-dollar"></i><p id="withdrawText">السحب</p></div>
-<div class="icon" id="depositIcon"><i class="fa fa-wallet"></i><p id="depositText">الإيداع</p></div>
-<div class="icon" id="historyIcon"><i class="fa fa-money-check-dollar"></i><p id="historyText">الرصيد</p></div>
+<div class="icon" data-page="withdraw"><i class="fa fa-arrow-up"></i><p id="withdrawText"></p></div>
+<div class="icon" data-page="deposit"><i class="fa fa-arrow-down"></i><p id="depositText"></p></div>
+<div class="icon" data-page="transactions"><i class="fa fa-wallet"></i><p id="transactionsText"></p></div>
 <div class="icon" id="logoutIcon"><i class="fa fa-sign-out-alt"></i><p id="logoutText"></p></div>
 </div>
 </div>
@@ -110,62 +113,163 @@ p{line-height:1.6}
 
 <!-- WITHDRAW -->
 <div class="container hidden" id="withdraw">
-<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> رجوع</button>
+<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> <span id="backWithdraw"></span></button>
 <div class="card">
-<h3>طرق السحب</h3>
-<div class="subCard">
-<h4>DZD</h4>
-<p>الرصيد: <span id="wdDZD"></span> دج</p>
-<p>عنوان السحب: <span id="wdDZDAddress"></span></p>
-</div>
-<div class="subCard">
-<h4>USDT</h4>
-<p>الرصيد: <span id="wdUSDT"></span> USDT</p>
-<p>عنوان السحب: <span id="wdUSDTAddress"></span></p>
-</div>
+<h3>السحب</h3>
+<p>اختر الطريقة:</p>
+<button class="withdraw-btn" id="withdrawDZD">DZD</button>
+<button class="withdraw-btn" id="withdrawUSDT">USDT</button>
+<p id="withdrawInfo"></p>
 </div>
 </div>
 
 <!-- DEPOSIT -->
 <div class="container hidden" id="deposit">
-<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> رجوع</button>
+<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> <span id="backDeposit"></span></button>
 <div class="card">
-<h3>طرق الإيداع</h3>
-<div class="subCard">
-<h4>DZD</h4>
-<p>الرصيد: <span id="depDZD"></span> دج</p>
-<p>عنوان الإيداع: <span id="depDZDAddress"></span></p>
-</div>
-<div class="subCard">
-<h4>USDT</h4>
-<p>الرصيد: <span id="depUSDT"></span> USDT</p>
-<p>عنوان الإيداع: <span id="depUSDTAddress"></span></p>
-</div>
+<h3>الإيداع</h3>
+<p>اختر الطريقة:</p>
+<button class="deposit-btn" id="depositDZD">DZD</button>
+<button class="deposit-btn" id="depositUSDT">USDT</button>
+<p id="depositInfo"></p>
 </div>
 </div>
 
-<!-- HISTORY -->
-<div class="container hidden" id="history">
-<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> رجوع</button>
-<div class="card">
-<h3>سجل العمليات</h3>
-<div id="historyList"></div>
-</div>
+<!-- TRANSACTIONS -->
+<div class="container hidden" id="transactions">
+<button class="back" data-back="home"><i class="fa fa-arrow-left"></i> <span id="backTransactions"></span></button>
+<div id="transactionList"></div>
 </div>
 
 <script>
-// بيانات المستخدمين
+// الترجمات
+const translations={
+ar:{
+login:"تسجيل الدخول",loginBtn:"دخول / تسجيل",bal:"رصيدك",lvl:"مستواك",refs:"إحالاتك",
+tasks:"المهام",levels:"المستويات",levelsList:["المستوى التحفيزي","المستوى الأول","المستوى الثاني","المستوى الثالث","المستوى الرابع","المستوى الخامس","المستوى السادس"],
+profile:"ملفي",support:"الدعم",back:"رجوع",taskTitle:"المهمة اليومية",doTask:"تنفيذ المهمة",taskInfo:"مهمة واحدة كل 24 ساعة",
+aboutText:"من نحن",aboutContent:"منصة Groupe 122 منصة جزائرية مائة بالمائة حقيقية تسعى لتصبح أفضل منصة عالمية للترويج والإشهار وخلق فرص عمل حقيقية في ظل التطور الاقتصادي الرقمي في التجارة والتسويق.",
+contactText:"راسلنا",contactInfo:"راسلنا على البريد الإلكتروني التالي: hamadamamado36@gmail.com",
+logoutText:"خروج",profileUser:"User: ",profileLevel:"Level: ",profileRefs:"Referrals: ",
+withdrawText:"سحب",depositText:"إيداع",transactionsText:"الرصيد"
+},
+fr:{
+login:"Connexion",loginBtn:"Entrer / S'inscrire",bal:"Solde",lvl:"Niveau",refs:"Parrainages",
+tasks:"Tâches",levels:"Niveaux",levelsList:["Niveau Motivationnel","Niveau 1","Niveau 2","Niveau 3","Niveau 4","Niveau 5","Niveau 6"],
+profile:"Profil",support:"Support",back:"Retour",taskTitle:"Tâche quotidienne",doTask:"Exécuter",taskInfo:"Une tâche toutes les 24 heures",
+aboutText:"À propos",aboutContent:"La plateforme Groupe 122 est 100% algérienne et vise à devenir la meilleure plateforme mondiale pour la promotion, la publicité et la création d'emplois réels dans le contexte du développement économique numérique.",
+contactText:"Contact",contactInfo:"Contactez-nous à l'adresse e-mail suivante: hamadamamado36@gmail.com",
+logoutText:"Déconnexion",profileUser:"Utilisateur: ",profileLevel:"Niveau: ",profileRefs:"Parrainages: ",
+withdrawText:"Retrait",depositText:"Dépôt",transactionsText:"Solde"
+},
+en:{
+login:"Login",loginBtn:"Login / Register",bal:"Balance",lvl:"Level",refs:"Referrals",
+tasks:"Tasks",levels:"Levels",levelsList:["Motivational Level","Level 1","Level 2","Level 3","Level 4","Level 5","Level 6"],
+profile:"Profile",support:"Support",back:"Back",taskTitle:"Daily Task",doTask:"Execute",taskInfo:"One task every 24 hours",
+aboutText:"About",aboutContent:"Groupe 122 is a 100% Algerian platform aiming to become the best global platform for promotion, advertising and creating real job opportunities in the context of digital economic development.",
+contactText:"Contact",contactInfo:"Contact us at the following email: hamadamamado36@gmail.com",
+logoutText:"Logout",profileUser:"User: ",profileLevel:"Level: ",profileRefs:"Referrals: ",
+withdrawText:"Withdraw",depositText:"Deposit",transactionsText:"Balance"
+}
+};
+
+// المستخدمين
 let users=JSON.parse(localStorage.getItem("users")||"{}");
 let current=null;
+let transactions=JSON.parse(localStorage.getItem("transactions")||"{}");
+
+// المستويات
+const levels=[{name:"المستوى التحفيزي",daily:50},{name:"المستوى الأول",daily:70},{name:"المستوى الثاني",daily:160},{name:"المستوى الثالث",daily:400},{name:"المستوى الرابع",daily:650},{name:"المستوى الخامس",daily:900},{name:"المستوى السادس",daily:1200}];
 
 // عناصر الصفحة
 const loginDiv=document.getElementById("login");
 const homeDiv=document.getElementById("home");
+const levelList=document.getElementById("levelList");
+const loginBtn=document.getElementById("loginBtn");
+const arBtn=document.getElementById("arBtn");
+const frBtn=document.getElementById("frBtn");
+const enBtn=document.getElementById("enBtn");
+const balanceEl=document.getElementById("balance");
 
-// أيقونات الإضافات
-const withdrawIcon=document.getElementById("withdrawIcon");
-const depositIcon=document.getElementById("depositIcon");
-const historyIcon=document.getElementById("historyIcon");
+// تغيير اللغة
+function setLang(l){localStorage.setItem("lang",l);applyLang(l);}
+function applyLang(l){
+    const t = translations[l];
+    document.documentElement.lang = l;
+    document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
+
+    document.getElementById("loginTitle").innerText = t.login;
+    loginBtn.innerText = t.loginBtn;
+    document.getElementById("balLabel").innerText = t.bal;
+    document.getElementById("lvlLabel").innerText = t.lvl;
+    document.getElementById("refLabel").innerText = t.refs;
+    document.getElementById("taskTitle").innerText = t.taskTitle;
+    document.getElementById("doTaskBtn").innerText = t.doTask;
+    document.getElementById("taskInfo").innerText = t.taskInfo;
+    document.getElementById("aboutContent").innerText = t.aboutContent;
+    document.getElementById("contactInfo").innerText = t.contactInfo;
+
+    const iconMap = {
+        tasksText: t.tasks,
+        levelsText: t.levels,
+        aboutText: t.aboutText,
+        contactText: t.contactText,
+        profileText: t.profile,
+        logoutText: t.logoutText,
+        withdrawText: t.withdrawText,
+        depositText: t.depositText,
+        transactionsText: t.transactionsText
+    };
+    Object.keys(iconMap).forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.innerText = iconMap[id];
+    });
+
+    document.getElementById("backTasks").innerText = t.back;
+    document.getElementById("backLevels").innerText = t.back;
+    document.getElementById("backAbout").innerText = t.back;
+    document.getElementById("backContact").innerText = t.back;
+    document.getElementById("backProfile").innerText = t.back;
+    document.getElementById("backWithdraw").innerText = t.back;
+    document.getElementById("backDeposit").innerText = t.back;
+    document.getElementById("backTransactions").innerText = t.back;
+
+    renderLevels();
+}
+applyLang(localStorage.getItem("lang")||"ar");
+
+// تسجيل الدخول
+loginBtn.onclick=()=>{
+    let u=document.getElementById("u").value.trim();
+    let p=document.getElementById("p").value;
+    if(!u||!p) return alert("Fill data");
+    if(!users[u]) users[u]={p,bal:0,lvl:0,refs:[],task:""};
+    if(users[u].p!==p) return alert("Wrong password");
+    current=u;
+    localStorage.setItem("users",JSON.stringify(users));
+    loginDiv.classList.add("hidden");
+    homeDiv.classList.remove("hidden");
+    updateBalance();
+    applyLang(localStorage.getItem("lang")||"ar");
+};
+
+// أزرار اللغة
+arBtn.onclick=()=>setLang("ar");
+frBtn.onclick=()=>setLang("fr");
+enBtn.onclick=()=>setLang("en");
+
+// أيقونات الصفحة
+document.querySelectorAll(".icon[data-page]").forEach(el=>{
+    el.onclick=()=>openPage(el.getAttribute("data-page"));
+});
+
+// تسجيل الخروج
+document.getElementById("logoutIcon").onclick=()=>{
+    current=null;
+    homeDiv.classList.add("hidden");
+    loginDiv.classList.remove("hidden");
+    applyLang(localStorage.getItem("lang")||"ar");
+};
 
 // أزرار الرجوع
 document.querySelectorAll(".back").forEach(el=>{
@@ -176,13 +280,68 @@ document.querySelectorAll(".back").forEach(el=>{
 function openPage(id){
     document.querySelectorAll(".container").forEach(c=>c.classList.add("hidden"));
     document.getElementById(id).classList.remove("hidden");
+
+    if(id === "profile" && current && users[current]){
+        const u = users[current];
+        const lang = localStorage.getItem("lang") || "ar";
+        document.getElementById("profileUser").innerText = translations[lang].profileUser + current;
+        document.getElementById("profileLevel").innerText = translations[lang].profileLevel + (u.lvl || 0);
+        document.getElementById("profileRefs").innerText = translations[lang].profileRefs + (u.refs.length || 0);
+    }
+
+    if(id === "transactions") renderTransactions();
 }
 
-// أيقونات إضافية
-withdrawIcon.onclick=()=>openPage("withdraw");
-depositIcon.onclick=()=>openPage("deposit");
-historyIcon.onclick=()=>openPage("history");
+// عرض المستويات
+function renderLevels(){
+    const lang = localStorage.getItem("lang") || "ar";
+    levelList.innerHTML="";
+    levels.forEach((l,i)=>{
+        let name = translations[lang].levelsList[i];
+        levelList.innerHTML+=`<div class="card"><h3>${name}</h3><p>ربح المهمة اليومية: ${l.daily} دج</p><p>كل 24 ساعة مهمة واحدة</p></div>`;
+    });
+}
 
-</script>
-</body>
-</html>
+// تحديث الرصيد
+function updateBalance(){if(current && users[current]) balanceEl.innerText=users[current].bal+" DA";}
+
+// إضافة عملية
+function addTransaction(type,method,amount){
+    if(!transactions[current]) transactions[current]=[];
+    transactions[current].push({type,method,amount,date:new Date().toLocaleString()});
+    localStorage.setItem("transactions",JSON.stringify(transactions));
+}
+
+// السحب
+document.getElementById("withdrawDZD").onclick=()=>{
+    if(current && users[current]) addTransaction("سحب","DZD",100),users[current].bal-=100,updateBalance(),document.getElementById("withdrawInfo").innerText="تم سحب 100 DZD";
+}
+document.getElementById("withdrawUSDT").onclick=()=>{
+    if(current && users[current]) addTransaction("سحب","USDT",1),users[current].bal-=1,updateBalance(),document.getElementById("withdrawInfo").innerText="تم سحب 1 USDT";
+}
+
+// الإيداع
+document.getElementById("depositDZD").onclick=()=>{
+    if(current && users[current]) addTransaction("إيداع","DZD",500),users[current].bal+=500,updateBalance(),document.getElementById("depositInfo").innerText="تم إيداع 500 DZD";
+}
+document.getElementById("depositUSDT").onclick=()=>{
+    if(current && users[current]) addTransaction("إيداع","USDT",5),users[current].bal+=5,updateBalance(),document.getElementById("depositInfo").innerText="تم إيداع 5 USDT";
+}
+
+// عرض المعاملات
+function renderTransactions(){
+    const listDiv = document.getElementById("transactionList");
+    listDiv.innerHTML = "";
+    if(!transactions[current] || transactions[current].length === 0){
+        listDiv.innerHTML = "<p>لا توجد معاملات بعد</p>";
+        return;
+    }
+    transactions[current].forEach(tr => {
+        listDiv.innerHTML += `<div class="transaction">
+            <p>نوع العملية: ${tr.type}</p>
+            <p>العملة/الطريقة: ${tr.method}</p>
+            <p>المبلغ: ${tr.amount}</p>
+            <p>التاريخ: ${tr.date}</p>
+        </div>`;
+    });
+} 
