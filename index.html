@@ -59,9 +59,9 @@ p{line-height:1.6}
 <div class="icon" data-page="about"><i class="fa fa-circle-info"></i><p id="aboutText"></p></div>
 <div class="icon" data-page="contact"><i class="fa fa-envelope"></i><p id="contactText"></p></div>
 <div class="icon" data-page="profile"><i class="fa fa-user"></i><p id="profileText"></p></div>
-<div class="icon" data-page="withdraw"><i class="fa fa-money-bill-wave"></i><p id="withdrawText">سحب</p></div>
-<div class="icon" data-page="deposit"><i class="fa fa-wallet"></i><p id="depositText">إيداع</p></div>
-<div class="icon" data-page="transactions"><i class="fa fa-chart-line"></i><p id="transactionsText">الرصيد</p></div>
+<div class="icon" data-page="withdraw"><i class="fa fa-money-bill-wave"></i><p id="withdrawText"></p></div>
+<div class="icon" data-page="deposit"><i class="fa fa-wallet"></i><p id="depositText"></p></div>
+<div class="icon" data-page="transactions"><i class="fa fa-chart-line"></i><p id="transactionsText"></p></div>
 <div class="icon" id="logoutIcon"><i class="fa fa-sign-out-alt"></i><p id="logoutText"></p></div>
 </div>
 </div>
@@ -114,11 +114,15 @@ p{line-height:1.6}
 <div class="small-card">
 <h4>DZD</h4>
 <p>رصيدك: <span id="wdDZD">0</span> دج</p>
+<input type="number" id="wdDZDVal" placeholder="أدخل المبلغ">
+<button class="main" id="wdDZDBtn">سحب</button>
 <p>عنوان السحب: <span id="wdDZDAddr">userDZD123</span></p>
 </div>
 <div class="small-card">
 <h4>USDT</h4>
 <p>رصيدك: <span id="wdUSDT">0</span></p>
+<input type="number" id="wdUSDTVal" placeholder="أدخل المبلغ">
+<button class="main" id="wdUSDTBtn">سحب</button>
 <p>عنوان السحب: <span id="wdUSDTAddr">userUSDT123</span></p>
 </div>
 </div>
@@ -129,11 +133,15 @@ p{line-height:1.6}
 <div class="small-card">
 <h4>DZD</h4>
 <p>رصيد الإيداع: <span id="depDZD">0</span> دج</p>
+<input type="number" id="depDZDVal" placeholder="أدخل المبلغ">
+<button class="main" id="depDZDBtn">إيداع</button>
 <p>عنوان الإيداع: <span id="depDZDAddr">adminDZD123</span></p>
 </div>
 <div class="small-card">
 <h4>USDT</h4>
 <p>رصيد الإيداع: <span id="depUSDT">0</span></p>
+<input type="number" id="depUSDTVal" placeholder="أدخل المبلغ">
+<button class="main" id="depUSDTBtn">إيداع</button>
 <p>عنوان الإيداع: <span id="depUSDTAddr">adminUSDT123</span></p>
 </div>
 </div>
@@ -230,12 +238,8 @@ function applyLang(l){
     document.getElementById("backTransactions").innerText = t.back;
 
     renderLevels();
-
-    if(current && !loginDiv.classList.contains("hidden") === false){
-        openPage("profile");
-    }
+    updateBalances();
 }
-
 applyLang(localStorage.getItem("lang")||"ar");
 
 // تسجيل الدخول
@@ -243,7 +247,7 @@ loginBtn.onclick=()=>{
     let u=document.getElementById("u").value.trim();
     let p=document.getElementById("p").value;
     if(!u||!p) return alert("Fill data");
-    if(!users[u]) users[u]={p,bal:0,lvl:0,refs:[],task:""};
+    if(!users[u]) users[u]={p,bal:0,usdt:0,lvl:0,refs:[],task:"",txs:[]};
     if(users[u].p!==p) return alert("Wrong password");
     current=u;
     localStorage.setItem("users",JSON.stringify(users));
@@ -252,14 +256,17 @@ loginBtn.onclick=()=>{
     applyLang(localStorage.getItem("lang")||"ar");
 };
 
+// أزرار اللغة
 arBtn.onclick=()=>setLang("ar");
 frBtn.onclick=()=>setLang("fr");
 enBtn.onclick=()=>setLang("en");
 
+// أيقونات الصفحة
 document.querySelectorAll(".icon[data-page]").forEach(el=>{
     el.onclick=()=>openPage(el.getAttribute("data-page"));
 });
 
+// تسجيل الخروج
 document.getElementById("logoutIcon").onclick=()=>{
     current=null;
     homeDiv.classList.add("hidden");
@@ -267,33 +274,38 @@ document.getElementById("logoutIcon").onclick=()=>{
     applyLang(localStorage.getItem("lang")||"ar");
 };
 
+// أزرار الرجوع
 document.querySelectorAll(".back").forEach(el=>{
     el.onclick=()=>openPage(el.getAttribute("data-back"));
 });
 
+// فتح صفحة
 function openPage(id){
     document.querySelectorAll(".container").forEach(c=>c.classList.add("hidden"));
     document.getElementById(id).classList.remove("hidden");
 
-    if(id === "profile" && current && users[current]){
+    if(current && users[current]){
         const u = users[current];
         const lang = localStorage.getItem("lang") || "ar";
-        document.getElementById("profileUser").innerText = translations[lang].profileUser + current;
-        document.getElementById("profileLevel").innerText = translations[lang].profileLevel + (u.lvl || 0);
-        document.getElementById("profileRefs").innerText = translations[lang].profileRefs + (u.refs.length || 0);
-    }
-
-    if(id === "transactions" && current && users[current]){
-        const trDiv = document.getElementById("transactionList");
-        trDiv.innerHTML="";
-        const udata = users[current];
-        const txs = udata.txs || [];
-        txs.forEach(t=>{
-            trDiv.innerHTML+=`<div class="small-card"><p>${t.date}: ${t.type} ${t.currency} ${t.amount}</p></div>`;
-        });
+        if(id === "profile"){
+            document.getElementById("profileUser").innerText = translations[lang].profileUser + current;
+            document.getElementById("profileLevel").innerText = translations[lang].profileLevel + (u.lvl || 0);
+            document.getElementById("profileRefs").innerText = translations[lang].profileRefs + (u.refs.length || 0);
+        }
+        if(id === "transactions"){
+            const trDiv = document.getElementById("transactionList");
+            trDiv.innerHTML="";
+            u.txs.forEach(t=>{
+                trDiv.innerHTML+=`<div class="small-card"><p>${t.date}: ${t.type} ${t.currency} ${t.amount}</p></div>`;
+            });
+        }
+        if(id === "withdraw" || id === "deposit"){
+            updateBalances();
+        }
     }
 }
 
+// عرض المستويات باللغات
 function renderLevels(){
     const lang = localStorage.getItem("lang") || "ar";
     levelList.innerHTML="";
@@ -302,6 +314,19 @@ function renderLevels(){
         levelList.innerHTML+=`<div class="card"><h3>${name}</h3><p>ربح المهمة اليومية: ${l.daily} دج</p><p>كل 24 ساعة مهمة واحدة</p></div>`;
     });
 }
+
+// تحديث أرصدة المستخدم في الصفحات
+function updateBalances(){
+    if(!current) return;
+    const u = users[current];
+    document.getElementById("balance").innerText = u.bal + " دج";
+    document.getElementById("wdDZD").innerText = u.bal;
+    document.getElementById("wdUSDT").innerText = u.usdt;
+    document.getElementById("depDZD").innerText = u.bal;
+    document.getElementById("depUSDT").innerText = u.usdt;
+}
+
+//
 </script>
 </body>
 </html>
