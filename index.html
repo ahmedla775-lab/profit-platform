@@ -6,14 +6,14 @@
 <title>Groupe des 22</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-body{margin:0;font-family:system-ui;background:#050505;color:#fff;font-size:18px} /* تم تغيير الخلفية للأسود الداكن */
+body{margin:0;font-family:system-ui;background:#050505;color:#fff;font-size:18px} /* الخلفية أسود داكن */
 .hidden{display:none}
 header{padding:16px;background:#020617;display:flex;justify-content:space-between;align-items:center}
 .container{padding:20px}
 .card{background:#020617;border-radius:18px;padding:20px;margin-bottom:18px}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
 .icon{background:#020617;border-radius:18px;padding:25px;text-align:center;cursor:pointer}
-.icon i{font-size:34px;color:#000000;margin-bottom:10px} /* الأيقونات سوداء */
+.icon i{font-size:34px;color:#8B4513;margin-bottom:10px} /* أيقونات بني أشعل */
 .icon p{font-size:16px;color:#fff} /* الكتابة بيضاء */
 .main{width:100%;padding:15px;border:none;border-radius:14px;font-size:18px;font-weight:bold;background:#FFD700;color:#020617;cursor:pointer}
 input,select{width:100%;padding:12px;border-radius:10px;border:none;margin:8px 0;background:#222;color:#fff}
@@ -110,30 +110,24 @@ const ADMIN_WHATS="213660624409";
 
 // الترجمات
 const translations={
-ar:{
-login:"تسجيل الدخول",loginBtn:"دخول / تسجيل",bal:"رصيدك",lvl:"مستواك",refs:"إحالاتك",
+ar:{login:"تسجيل الدخول",loginBtn:"دخول / تسجيل",bal:"رصيدك",lvl:"مستواك",refs:"إحالاتك",
 tasks:"المهام",levels:"المستويات",levelsList:["المستوى التحفيزي","المستوى الأول","المستوى الثاني","المستوى الثالث","المستوى الرابع","المستوى الخامس","المستوى السادس"],
 profile:"ملفي",support:"الدعم",back:"رجوع",taskTitle:"المهمة اليومية",doTask:"تنفيذ المهمة",taskInfo:"مهمة واحدة كل 24 ساعة",
 aboutText:"من نحن",aboutContent:"منصة Groupe 122 منصة جزائرية مائة بالمائة حقيقية تسعى لتصبح أفضل منصة عالمية للترويج والإشهار وخلق فرص عمل حقيقية في ظل التطور الاقتصادي الرقمي في التجارة والتسويق.",
 contactText:"راسلنا",contactInfo:"راسلنا على البريد الإلكتروني التالي: hamadamamado36@gmail.com",
-logoutText:"خروج",profileUser:"User: ",profileLevel:"Level: ",profileRefs:"Referrals: "
-},
-fr:{
-login:"Connexion",loginBtn:"Entrer / S'inscrire",bal:"Solde",lvl:"Niveau",refs:"Parrainages",
+logoutText:"خروج",profileUser:"User: ",profileLevel:"Level: ",profileRefs:"Referrals: "},
+fr:{login:"Connexion",loginBtn:"Entrer / S'inscrire",bal:"Solde",lvl:"Niveau",refs:"Parrainages",
 tasks:"Tâches",levels:"Niveaux",levelsList:["Niveau Motivationnel","Niveau 1","Niveau 2","Niveau 3","Niveau 4","Niveau 5","Niveau 6"],
 profile:"Profil",support:"Support",back:"Retour",taskTitle:"Tâche quotidienne",doTask:"Exécuter",taskInfo:"Une tâche toutes les 24 heures",
 aboutText:"À propos",aboutContent:"La plateforme Groupe 122 est 100% algérienne et vise à devenir la meilleure plateforme mondiale pour la promotion, la publicité et la création d'emplois réels dans le contexte du développement économique numérique.",
 contactText:"Contact",contactInfo:"Contactez-nous à l'adresse e-mail suivante: hamadamamado36@gmail.com",
-logoutText:"Déconnexion",profileUser:"Utilisateur: ",profileLevel:"Niveau: ",profileRefs:"Parrainages: "
-},
-en:{
-login:"Login",loginBtn:"Login / Register",bal:"Balance",lvl:"Level",refs:"Referrals",
+logoutText:"Déconnexion",profileUser:"Utilisateur: ",profileLevel:"Niveau: ",profileRefs:"Parrainages: "},
+en:{login:"Login",loginBtn:"Login / Register",bal:"Balance",lvl:"Level",refs:"Referrals",
 tasks:"Tasks",levels:"Levels",levelsList:["Motivational Level","Level 1","Level 2","Level 3","Level 4","Level 5","Level 6"],
 profile:"Profile",support:"Support",back:"Back",taskTitle:"Daily Task",doTask:"Execute",taskInfo:"One task every 24 hours",
 aboutText:"About",aboutContent:"Groupe 122 is a 100% Algerian platform aiming to become the best global platform for promotion, advertising and creating real job opportunities in the context of digital economic development.",
 contactText:"Contact",contactInfo:"Contact us at the following email: hamadamamado36@gmail.com",
-logoutText:"Logout",profileUser:"User: ",profileLevel:"Level: ",profileRefs:"Referrals: "
-}
+logoutText:"Logout",profileUser:"User: ",profileLevel:"Level: ",profileRefs:"Referrals: "}
 };
 
 // بيانات المستخدمين
@@ -159,7 +153,6 @@ function applyLang(l){
     document.documentElement.lang = l;
     document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
 
-    // تحديث النصوص العامة
     document.getElementById("loginTitle").innerText = t.login;
     loginBtn.innerText = t.loginBtn;
     document.getElementById("balLabel").innerText = t.bal;
@@ -171,7 +164,6 @@ function applyLang(l){
     document.getElementById("aboutContent").innerText = t.aboutContent;
     document.getElementById("contactInfo").innerText = t.contactInfo;
 
-    // تحديث أيقونات الصفحة الرئيسية
     const iconMap = {
         tasksText: t.tasks,
         levelsText: t.levels,
@@ -185,7 +177,6 @@ function applyLang(l){
         if(el) el.innerText = iconMap[id];
     });
 
-    // تحديث أزرار الرجوع
     document.getElementById("backTasks").innerText = t.back;
     document.getElementById("backLevels").innerText = t.back;
     document.getElementById("backAbout").innerText = t.back;
@@ -194,7 +185,6 @@ function applyLang(l){
 
     renderLevels();
 
-    // تحديث ملف المستخدم إذا كانت الصفحة مفتوحة
     if(current && !loginDiv.classList.contains("hidden") === false){
         openPage("profile");
     }
