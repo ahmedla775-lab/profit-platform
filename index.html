@@ -6,19 +6,90 @@
 <title>Groupe des 22</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-body{margin:0;font-family:system-ui;background:#050505;color:#fff;font-size:18px} /* الخلفية أسود داكن */
+body{
+  margin:0;
+  font-family:system-ui;
+  background:#0f0f0f; /* أسود داكن */
+  color:#fff;
+  font-size:18px;
+}
 .hidden{display:none}
-header{padding:16px;background:#020617;display:flex;justify-content:space-between;align-items:center}
+header{
+  padding:16px;
+  background:#111;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
 .container{padding:20px}
-.card{background:#020617;border-radius:18px;padding:20px;margin-bottom:18px}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
-.icon{background:#020617;border-radius:18px;padding:25px;text-align:center;cursor:pointer}
-.icon i{font-size:34px;color:#8B4513;margin-bottom:10px} /* أيقونات بني أشعل */
-.icon p{font-size:16px;color:#fff} /* الكتابة بيضاء */
-.main{width:100%;padding:15px;border:none;border-radius:14px;font-size:18px;font-weight:bold;background:#FFD700;color:#020617;cursor:pointer}
-input,select{width:100%;padding:12px;border-radius:10px;border:none;margin:8px 0;background:#222;color:#fff}
-.back{background:none;border:none;color:red;margin-bottom:10px;font-size:16px;cursor:pointer} /* سهم الرجوع أحمر */
-.lang button{background:none;border:1px solid #FFD700;color:#FFD700;margin:0 3px;padding:5px 10px;border-radius:6px;cursor:pointer}
+.card{
+  background:#111;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:18px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:18px;
+}
+.icon{
+  background:#111;
+  border-radius:18px;
+  padding:30px 20px;
+  text-align:center;
+  cursor:pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow:0 4px 12px rgba(0,0,0,0.5);
+}
+.icon:hover{
+  transform:translateY(-6px);
+  box-shadow:0 8px 20px rgba(0,0,0,0.7);
+}
+.icon i{
+  font-size:38px;
+  color:#8B4513; /* بني أشعل */
+  margin-bottom:12px;
+}
+.icon p{
+  font-size:16px;
+  color:#fff;
+  margin:0;
+  font-weight:600;
+}
+.main{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:14px;
+  font-size:18px;
+  font-weight:bold;
+  background:#FFD700;
+  color:#0f0f0f;
+  cursor:pointer;
+}
+input,select{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  margin:8px 0;
+}
+.back{
+  background:none;
+  border:none;
+  color:#FF0000; /* أحمر */
+  margin-bottom:10px;
+  font-size:16px;
+  cursor:pointer;
+}
+.lang button{
+  background:none;
+  border:none;
+  margin:0 3px;
+  font-size:20px;
+  cursor:pointer;
+}
 h3{font-size:22px;text-align:center}
 p{line-height:1.6}
 </style>
@@ -153,6 +224,7 @@ function applyLang(l){
     document.documentElement.lang = l;
     document.documentElement.dir = l === "ar" ? "rtl" : "ltr";
 
+    // تحديث النصوص العامة
     document.getElementById("loginTitle").innerText = t.login;
     loginBtn.innerText = t.loginBtn;
     document.getElementById("balLabel").innerText = t.bal;
@@ -164,6 +236,7 @@ function applyLang(l){
     document.getElementById("aboutContent").innerText = t.aboutContent;
     document.getElementById("contactInfo").innerText = t.contactInfo;
 
+    // تحديث أيقونات الصفحة الرئيسية
     const iconMap = {
         tasksText: t.tasks,
         levelsText: t.levels,
@@ -177,6 +250,7 @@ function applyLang(l){
         if(el) el.innerText = iconMap[id];
     });
 
+    // تحديث أزرار الرجوع
     document.getElementById("backTasks").innerText = t.back;
     document.getElementById("backLevels").innerText = t.back;
     document.getElementById("backAbout").innerText = t.back;
