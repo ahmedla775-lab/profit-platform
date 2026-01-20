@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -7,24 +6,22 @@
 <title>Groupe des 22</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-body{margin:0;font-family:system-ui;background:#020617;color:#fff;font-size:18px}
+body{margin:0;font-family:system-ui;background:#050505;color:#fff;font-size:18px}
 .hidden{display:none}
-header{padding:16px;background:#0f0f0f;display:flex;justify-content:space-between;align-items:center}
+header{padding:16px;background:#020617;display:flex;justify-content:space-between;align-items:center}
 .container{padding:20px}
-.card{background:#0f0f0f;border-radius:18px;padding:20px;margin-bottom:18px}
+.card{background:#020617;border-radius:18px;padding:20px;margin-bottom:18px}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
-.icon{background:#0f0f0f;border-radius:18px;padding:25px;text-align:center;cursor:pointer}
-.icon i{font-size:34px;color:#A0522D;margin-bottom:10px} /* اللون البني */
+.icon{background:#1a0d00;border-radius:18px;padding:25px;text-align:center;cursor:pointer}
+.icon i{font-size:34px;color:#8B4513;margin-bottom:10px}
 .icon p{font-size:16px}
 .main{width:100%;padding:15px;border:none;border-radius:14px;font-size:18px;font-weight:bold;background:#FFD700;color:#020617;cursor:pointer}
 input,select{width:100%;padding:12px;border-radius:10px;border:none;margin:8px 0}
-.back{background:none;border:none;color:#FF0000;margin-bottom:10px;font-size:16px;cursor:pointer} /* السهم الأحمر */
-.lang button{background:none;border:1px solid #FFD700;color:#FFD700;margin:0 3px;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:16px}
-.lang button span{margin-left:5px}
+.back{background:none;border:none;color:red;margin-bottom:10px;font-size:16px;cursor:pointer}
+.lang button{background:none;border:none;font-size:20px;margin:0 3px;cursor:pointer}
 h3{font-size:22px;text-align:center}
 p{line-height:1.6}
-.withdraw-btn, .deposit-btn{background:#A0522D;color:#fff;border:none;padding:10px 15px;margin:5px;border-radius:8px;cursor:pointer}
-.transaction{background:#1f1f1f;border-radius:12px;padding:10px;margin-bottom:10px;font-size:16px}
+.small-card{background:#1a0d00;border-radius:14px;padding:12px;margin:10px 0;text-align:center}
 </style>
 </head>
 <body>
@@ -32,9 +29,9 @@ p{line-height:1.6}
 <header>
 <h3>Groupe des 22</h3>
 <div class="lang">
-<button id="arBtn"><span>🇩🇿</span>AR</button>
-<button id="frBtn"><span>🇫🇷</span>FR</button>
-<button id="enBtn"><span>🇺🇸</span>EN</button>
+<button id="arBtn">🇩🇿</button>
+<button id="frBtn">🇫🇷</button>
+<button id="enBtn">🇺🇸</button>
 </div>
 </header>
 
@@ -62,9 +59,9 @@ p{line-height:1.6}
 <div class="icon" data-page="about"><i class="fa fa-circle-info"></i><p id="aboutText"></p></div>
 <div class="icon" data-page="contact"><i class="fa fa-envelope"></i><p id="contactText"></p></div>
 <div class="icon" data-page="profile"><i class="fa fa-user"></i><p id="profileText"></p></div>
-<div class="icon" data-page="withdraw"><i class="fa fa-arrow-up"></i><p id="withdrawText"></p></div>
-<div class="icon" data-page="deposit"><i class="fa fa-arrow-down"></i><p id="depositText"></p></div>
-<div class="icon" data-page="transactions"><i class="fa fa-wallet"></i><p id="transactionsText"></p></div>
+<div class="icon" data-page="withdraw"><i class="fa fa-money-bill-wave"></i><p id="withdrawText">سحب</p></div>
+<div class="icon" data-page="deposit"><i class="fa fa-wallet"></i><p id="depositText">إيداع</p></div>
+<div class="icon" data-page="transactions"><i class="fa fa-chart-line"></i><p id="transactionsText">الرصيد</p></div>
 <div class="icon" id="logoutIcon"><i class="fa fa-sign-out-alt"></i><p id="logoutText"></p></div>
 </div>
 </div>
@@ -114,24 +111,30 @@ p{line-height:1.6}
 <!-- WITHDRAW -->
 <div class="container hidden" id="withdraw">
 <button class="back" data-back="home"><i class="fa fa-arrow-left"></i> <span id="backWithdraw"></span></button>
-<div class="card">
-<h3>السحب</h3>
-<p>اختر الطريقة:</p>
-<button class="withdraw-btn" id="withdrawDZD">DZD</button>
-<button class="withdraw-btn" id="withdrawUSDT">USDT</button>
-<p id="withdrawInfo"></p>
+<div class="small-card">
+<h4>DZD</h4>
+<p>رصيدك: <span id="wdDZD">0</span> دج</p>
+<p>عنوان السحب: <span id="wdDZDAddr">userDZD123</span></p>
+</div>
+<div class="small-card">
+<h4>USDT</h4>
+<p>رصيدك: <span id="wdUSDT">0</span></p>
+<p>عنوان السحب: <span id="wdUSDTAddr">userUSDT123</span></p>
 </div>
 </div>
 
 <!-- DEPOSIT -->
 <div class="container hidden" id="deposit">
 <button class="back" data-back="home"><i class="fa fa-arrow-left"></i> <span id="backDeposit"></span></button>
-<div class="card">
-<h3>الإيداع</h3>
-<p>اختر الطريقة:</p>
-<button class="deposit-btn" id="depositDZD">DZD</button>
-<button class="deposit-btn" id="depositUSDT">USDT</button>
-<p id="depositInfo"></p>
+<div class="small-card">
+<h4>DZD</h4>
+<p>رصيد الإيداع: <span id="depDZD">0</span> دج</p>
+<p>عنوان الإيداع: <span id="depDZDAddr">adminDZD123</span></p>
+</div>
+<div class="small-card">
+<h4>USDT</h4>
+<p>رصيد الإيداع: <span id="depUSDT">0</span></p>
+<p>عنوان الإيداع: <span id="depUSDTAddr">adminUSDT123</span></p>
 </div>
 </div>
 
@@ -142,41 +145,34 @@ p{line-height:1.6}
 </div>
 
 <script>
+// الرقم الإداري
+const ADMIN_WHATS="213660624409";
+
 // الترجمات
 const translations={
-ar:{
-login:"تسجيل الدخول",loginBtn:"دخول / تسجيل",bal:"رصيدك",lvl:"مستواك",refs:"إحالاتك",
+ar:{login:"تسجيل الدخول",loginBtn:"دخول / تسجيل",bal:"رصيدك",lvl:"مستواك",refs:"إحالاتك",
 tasks:"المهام",levels:"المستويات",levelsList:["المستوى التحفيزي","المستوى الأول","المستوى الثاني","المستوى الثالث","المستوى الرابع","المستوى الخامس","المستوى السادس"],
 profile:"ملفي",support:"الدعم",back:"رجوع",taskTitle:"المهمة اليومية",doTask:"تنفيذ المهمة",taskInfo:"مهمة واحدة كل 24 ساعة",
 aboutText:"من نحن",aboutContent:"منصة Groupe 122 منصة جزائرية مائة بالمائة حقيقية تسعى لتصبح أفضل منصة عالمية للترويج والإشهار وخلق فرص عمل حقيقية في ظل التطور الاقتصادي الرقمي في التجارة والتسويق.",
 contactText:"راسلنا",contactInfo:"راسلنا على البريد الإلكتروني التالي: hamadamamado36@gmail.com",
-logoutText:"خروج",profileUser:"User: ",profileLevel:"Level: ",profileRefs:"Referrals: ",
-withdrawText:"سحب",depositText:"إيداع",transactionsText:"الرصيد"
-},
-fr:{
-login:"Connexion",loginBtn:"Entrer / S'inscrire",bal:"Solde",lvl:"Niveau",refs:"Parrainages",
+logoutText:"خروج",profileUser:"User: ",profileLevel:"Level: ",profileRefs:"Referrals: ",withdraw:"سحب",deposit:"إيداع",transactions:"الرصيد"},
+fr:{login:"Connexion",loginBtn:"Entrer / S'inscrire",bal:"Solde",lvl:"Niveau",refs:"Parrainages",
 tasks:"Tâches",levels:"Niveaux",levelsList:["Niveau Motivationnel","Niveau 1","Niveau 2","Niveau 3","Niveau 4","Niveau 5","Niveau 6"],
 profile:"Profil",support:"Support",back:"Retour",taskTitle:"Tâche quotidienne",doTask:"Exécuter",taskInfo:"Une tâche toutes les 24 heures",
 aboutText:"À propos",aboutContent:"La plateforme Groupe 122 est 100% algérienne et vise à devenir la meilleure plateforme mondiale pour la promotion, la publicité et la création d'emplois réels dans le contexte du développement économique numérique.",
 contactText:"Contact",contactInfo:"Contactez-nous à l'adresse e-mail suivante: hamadamamado36@gmail.com",
-logoutText:"Déconnexion",profileUser:"Utilisateur: ",profileLevel:"Niveau: ",profileRefs:"Parrainages: ",
-withdrawText:"Retrait",depositText:"Dépôt",transactionsText:"Solde"
-},
-en:{
-login:"Login",loginBtn:"Login / Register",bal:"Balance",lvl:"Level",refs:"Referrals",
+logoutText:"Déconnexion",profileUser:"Utilisateur: ",profileLevel:"Niveau: ",profileRefs:"Parrainages: ",withdraw:"Retrait",deposit:"Dépôt",transactions:"Solde"},
+en:{login:"Login",loginBtn:"Login / Register",bal:"Balance",lvl:"Level",refs:"Referrals",
 tasks:"Tasks",levels:"Levels",levelsList:["Motivational Level","Level 1","Level 2","Level 3","Level 4","Level 5","Level 6"],
 profile:"Profile",support:"Support",back:"Back",taskTitle:"Daily Task",doTask:"Execute",taskInfo:"One task every 24 hours",
 aboutText:"About",aboutContent:"Groupe 122 is a 100% Algerian platform aiming to become the best global platform for promotion, advertising and creating real job opportunities in the context of digital economic development.",
 contactText:"Contact",contactInfo:"Contact us at the following email: hamadamamado36@gmail.com",
-logoutText:"Logout",profileUser:"User: ",profileLevel:"Level: ",profileRefs:"Referrals: ",
-withdrawText:"Withdraw",depositText:"Deposit",transactionsText:"Balance"
-}
+logoutText:"Logout",profileUser:"User: ",profileLevel:"Level: ",profileRefs:"Referrals: ",withdraw:"Withdraw",deposit:"Deposit",transactions:"Balance"}
 };
 
-// المستخدمين
+// بيانات المستخدمين
 let users=JSON.parse(localStorage.getItem("users")||"{}");
 let current=null;
-let transactions=JSON.parse(localStorage.getItem("transactions")||"{}");
 
 // المستويات
 const levels=[{name:"المستوى التحفيزي",daily:50},{name:"المستوى الأول",daily:70},{name:"المستوى الثاني",daily:160},{name:"المستوى الثالث",daily:400},{name:"المستوى الرابع",daily:650},{name:"المستوى الخامس",daily:900},{name:"المستوى السادس",daily:1200}];
@@ -189,7 +185,6 @@ const loginBtn=document.getElementById("loginBtn");
 const arBtn=document.getElementById("arBtn");
 const frBtn=document.getElementById("frBtn");
 const enBtn=document.getElementById("enBtn");
-const balanceEl=document.getElementById("balance");
 
 // تغيير اللغة
 function setLang(l){localStorage.setItem("lang",l);applyLang(l);}
@@ -216,9 +211,9 @@ function applyLang(l){
         contactText: t.contactText,
         profileText: t.profile,
         logoutText: t.logoutText,
-        withdrawText: t.withdrawText,
-        depositText: t.depositText,
-        transactionsText: t.transactionsText
+        withdrawText: t.withdraw,
+        depositText: t.deposit,
+        transactionsText: t.transactions
     };
     Object.keys(iconMap).forEach(id => {
         const el = document.getElementById(id);
@@ -235,7 +230,12 @@ function applyLang(l){
     document.getElementById("backTransactions").innerText = t.back;
 
     renderLevels();
+
+    if(current && !loginDiv.classList.contains("hidden") === false){
+        openPage("profile");
+    }
 }
+
 applyLang(localStorage.getItem("lang")||"ar");
 
 // تسجيل الدخول
@@ -249,21 +249,17 @@ loginBtn.onclick=()=>{
     localStorage.setItem("users",JSON.stringify(users));
     loginDiv.classList.add("hidden");
     homeDiv.classList.remove("hidden");
-    updateBalance();
     applyLang(localStorage.getItem("lang")||"ar");
 };
 
-// أزرار اللغة
 arBtn.onclick=()=>setLang("ar");
 frBtn.onclick=()=>setLang("fr");
 enBtn.onclick=()=>setLang("en");
 
-// أيقونات الصفحة
 document.querySelectorAll(".icon[data-page]").forEach(el=>{
     el.onclick=()=>openPage(el.getAttribute("data-page"));
 });
 
-// تسجيل الخروج
 document.getElementById("logoutIcon").onclick=()=>{
     current=null;
     homeDiv.classList.add("hidden");
@@ -271,12 +267,10 @@ document.getElementById("logoutIcon").onclick=()=>{
     applyLang(localStorage.getItem("lang")||"ar");
 };
 
-// أزرار الرجوع
 document.querySelectorAll(".back").forEach(el=>{
     el.onclick=()=>openPage(el.getAttribute("data-back"));
 });
 
-// فتح صفحة
 function openPage(id){
     document.querySelectorAll(".container").forEach(c=>c.classList.add("hidden"));
     document.getElementById(id).classList.remove("hidden");
@@ -289,10 +283,17 @@ function openPage(id){
         document.getElementById("profileRefs").innerText = translations[lang].profileRefs + (u.refs.length || 0);
     }
 
-    if(id === "transactions") renderTransactions();
+    if(id === "transactions" && current && users[current]){
+        const trDiv = document.getElementById("transactionList");
+        trDiv.innerHTML="";
+        const udata = users[current];
+        const txs = udata.txs || [];
+        txs.forEach(t=>{
+            trDiv.innerHTML+=`<div class="small-card"><p>${t.date}: ${t.type} ${t.currency} ${t.amount}</p></div>`;
+        });
+    }
 }
 
-// عرض المستويات
 function renderLevels(){
     const lang = localStorage.getItem("lang") || "ar";
     levelList.innerHTML="";
@@ -301,47 +302,6 @@ function renderLevels(){
         levelList.innerHTML+=`<div class="card"><h3>${name}</h3><p>ربح المهمة اليومية: ${l.daily} دج</p><p>كل 24 ساعة مهمة واحدة</p></div>`;
     });
 }
-
-// تحديث الرصيد
-function updateBalance(){if(current && users[current]) balanceEl.innerText=users[current].bal+" DA";}
-
-// إضافة عملية
-function addTransaction(type,method,amount){
-    if(!transactions[current]) transactions[current]=[];
-    transactions[current].push({type,method,amount,date:new Date().toLocaleString()});
-    localStorage.setItem("transactions",JSON.stringify(transactions));
-}
-
-// السحب
-document.getElementById("withdrawDZD").onclick=()=>{
-    if(current && users[current]) addTransaction("سحب","DZD",100),users[current].bal-=100,updateBalance(),document.getElementById("withdrawInfo").innerText="تم سحب 100 DZD";
-}
-document.getElementById("withdrawUSDT").onclick=()=>{
-    if(current && users[current]) addTransaction("سحب","USDT",1),users[current].bal-=1,updateBalance(),document.getElementById("withdrawInfo").innerText="تم سحب 1 USDT";
-}
-
-// الإيداع
-document.getElementById("depositDZD").onclick=()=>{
-    if(current && users[current]) addTransaction("إيداع","DZD",500),users[current].bal+=500,updateBalance(),document.getElementById("depositInfo").innerText="تم إيداع 500 DZD";
-}
-document.getElementById("depositUSDT").onclick=()=>{
-    if(current && users[current]) addTransaction("إيداع","USDT",5),users[current].bal+=5,updateBalance(),document.getElementById("depositInfo").innerText="تم إيداع 5 USDT";
-}
-
-// عرض المعاملات
-function renderTransactions(){
-    const listDiv = document.getElementById("transactionList");
-    listDiv.innerHTML = "";
-    if(!transactions[current] || transactions[current].length === 0){
-        listDiv.innerHTML = "<p>لا توجد معاملات بعد</p>";
-        return;
-    }
-    transactions[current].forEach(tr => {
-        listDiv.innerHTML += `<div class="transaction">
-            <p>نوع العملية: ${tr.type}</p>
-            <p>العملة/الطريقة: ${tr.method}</p>
-            <p>المبلغ: ${tr.amount}</p>
-            <p>التاريخ: ${tr.date}</p>
-        </div>`;
-    });
-} 
+</script>
+</body>
+</html>
